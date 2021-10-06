@@ -34,56 +34,90 @@
 */
 
 #include "HX711.h"
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
 
 #define LOADCELL_DOUT_PIN  6
 #define LOADCELL_SCK_PIN  5
 
-#define AVG_TIMES 100
+#define AVG_TIMES 20
+
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGHT 64
 
 HX711 scale;
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
-float calibration_factor = 819; //-7050 worked for my 440lb max scale setup
+float calibration_factor = 819;
+
+void setup_scale(){
+	scale.begin(LOADCELL_DOUT_PIN, LOADCELL_SCK_PIN);
+	scale.set_scale();
+	scale.tare();
+}
+
+void setup_display(){
+	if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { 
+		Serial.println(F("SSD1306 allocation failed"));
+		for(;;);
+	}
+	display.setRotation(0);
+	display.clearDisplay();
+	display.setTextSize(3); 
+	display.setTextColor(WHITE);
+}
 
 void setup() {
-  Serial.begin(9600);
-  Serial.println("HX711 calibration sketch");
-  Serial.println("Remove all weight from scale");
-  Serial.println("After readings begin, place known weight on scale");
-  Serial.println("Press + or a to increase calibration factor");
-  Serial.println("Press - or z to decrease calibration factor");
+	Serial.begin(9600);
+	Serial.println("Press + or a to increase calibration factor");
+	Serial.println("Press - or z to decrease calibration factor");
 
-  
-  scale.begin(LOADCELL_DOUT_PIN, LOADCELL_SCK_PIN);
-  scale.set_scale();
-  scale.tare(); //Reset the scale to 0
-  
-  long zero_factor = scale.read_average(); //Get a baseline reading
-  Serial.print("Zero factor: "); //This can be used to remove the need to tare the scale. Useful in permanent scale projects.
-  Serial.println(zero_factor);
+	setup_scale();
+	setup_display();
+}
+
+void manual_calibration_serial_input(){
+	if(Serial.available()){
+		char temp = Serial.read();
+		Serial.print("Reading char: ");
+		Serial.println(temp);
+
+		if(temp == '+' || temp == 'a')
+			calibration_factor += 1;
+		else if(temp == '-' || temp == 'z')
+			calibration_factor -= 1;
+		else if(temp == 't')
+		scale.tare();
+	}
+
+	scale.set_scale(calibration_factor); 
+}
+
+void display_grams(){
+	float grams = scale.get_units(AVG_TIMES);
+	Serial.print("Reading: ");
+	Serial.print(grams, 3);
+	Serial.print(" g"); //Change this to kg and re-adjust the calibration factor if you follow SI units like a sane person
+	Serial.print(" calibration_factor: ");
+	Serial.print(calibration_factor);
+	Serial.println();
+
+	char str_grams_tmp[6] = {0};
+	char str_grams[6] = {0};
+
+	dtostrf(grams, 4, 1, str_grams_tmp);
+	sprintf(str_grams,"%s G", str_grams_tmp);
+
+	display.setTextSize(3); 
+	display.setTextColor(WHITE);
+	display.setCursor(0, 5);
+	display.println(str_grams);
+	display.display();
+	display.clearDisplay();
 }
 
 void loop() {
+	display_grams();
 
-  scale.set_scale(calibration_factor); //Adjust to this calibration factor
-  float grams = scale.get_units(AVG_TIMES);
-  Serial.print("Reading: ");
-  Serial.print(grams, 3);
-  Serial.print(" g"); //Change this to kg and re-adjust the calibration factor if you follow SI units like a sane person
-  Serial.print(" calibration_factor: ");
-  Serial.print(calibration_factor);
-  Serial.println();
-
-  if(Serial.available())
-  {
-    char temp = Serial.read();
-    Serial.print("Reading char: ");
-    Serial.println(temp);
-
-    if(temp == '+' || temp == 'a')
-      calibration_factor += 1;
-    else if(temp == '-' || temp == 'z')
-      calibration_factor -= 1;
-    else if(temp == 't')
-      scale.tare();
-  }
+	manual_calibration_serial_input();	
 }
