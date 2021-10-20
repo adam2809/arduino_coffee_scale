@@ -40,13 +40,22 @@
 #define LOADCELL_DOUT_PIN  6
 #define LOADCELL_SCK_PIN  5
 
-#define AVG_TIMES 20
+#define AVG_TIMES 5
 
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
 
 HX711 scale;
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
+
+struct button_t{
+	int is_clicked;
+	int pin;
+};
+button_t button{
+	false,
+	3
+};
 
 float calibration_factor = 819;
 
@@ -67,6 +76,10 @@ void setup_display(){
 	display.setTextColor(WHITE);
 }
 
+void button_click_cb(){
+	button.is_clicked = true;
+}
+
 void setup() {
 	Serial.begin(9600);
 	Serial.println("Press + or a to increase calibration factor");
@@ -74,6 +87,7 @@ void setup() {
 
 	setup_scale();
 	setup_display();
+	attachInterrupt(digitalPinToInterrupt(button.pin), button_click_cb, FALLING);
 }
 
 void manual_calibration_serial_input(){
@@ -115,9 +129,12 @@ void display_grams(){
 	display.display();
 	display.clearDisplay();
 }
-
 void loop() {
 	display_grams();
+	if(button.is_clicked){
+		scale.tare();
+		button.is_clicked = false;
+	}
 
-	manual_calibration_serial_input();	
+	manual_calibration_serial_input();
 }
