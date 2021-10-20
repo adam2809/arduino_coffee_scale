@@ -36,6 +36,7 @@
 #include "HX711.h"
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
+#include <limits.h>
 
 #define LOADCELL_DOUT_PIN  6
 #define LOADCELL_SCK_PIN  5
@@ -44,6 +45,11 @@
 
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
+
+#define GRAM_DISPLAY_X 0
+#define GRAM_DISPLAY_Y 5
+#define TIME_DISPLAY_X 0
+#define TIME_DISPLAY_Y 35
 
 HX711 scale;
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
@@ -56,6 +62,8 @@ button_t button{
 	false,
 	3
 };
+
+unsigned long timer_start_millis = ULONG_MAX;
 
 float calibration_factor = 819;
 
@@ -122,15 +130,30 @@ void display_grams(){
 	dtostrf(grams, 4, 1, str_grams_tmp);
 	sprintf(str_grams,"%s G", str_grams_tmp);
 
-	display.setTextSize(3); 
-	display.setTextColor(WHITE);
-	display.setCursor(0, 5);
+	display.setCursor(GRAM_DISPLAY_X, GRAM_DISPLAY_Y);
 	display.println(str_grams);
 	display.display();
 	display.clearDisplay();
 }
+
+void display_time(){
+	long millis_to_display;
+	if (timer_start_millis == ULONG_MAX){
+		millis_to_display = 0;
+	}else{
+		millis_to_display = millis() - timer_start_millis;
+	}
+	int seconds_to_display = (millis_to_display/1000)%60;
+	int minutes_to_display = (millis_to_display/1000)/60;
+	char str_time[7] = {0};
+	snprintf(str_time,7," %02d:%02d",minutes_to_display,seconds_to_display);
+	display.setCursor(TIME_DISPLAY_X, TIME_DISPLAY_Y);
+	display.println(str_time);	
+}
+
 void loop() {
 	display_grams();
+	display_time();
 	if(button.is_clicked){
 		scale.tare();
 		button.is_clicked = false;
