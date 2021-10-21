@@ -138,11 +138,24 @@ void display_grams(){
 	float grams_avg = get_avg_filter_value();
 	Serial.print("Avg grams: ");Serial.print(grams_avg);Serial.println();
 
-	char str_grams_tmp[6] = {0};
-	char str_grams[6] = {0};
+	char str_grams_tmp[7] = {0};
+	char str_grams[7] = {0};
+	char minus_or_not;
 
-	dtostrf(grams_avg, 4, 1, str_grams_tmp);
-	sprintf(str_grams,"%s G", str_grams_tmp);
+	if (grams_avg < 0){
+		grams_avg*=-1;
+		minus_or_not = '-';
+	}else{
+		minus_or_not = ' ';
+	}
+
+	if(grams_avg >= 1000){
+		grams_avg = 999.9;
+	}
+
+	dtostrf(grams_avg, 3, 1, str_grams_tmp);
+	Serial.print("Avg grams str len: ");Serial.print(strlen(str_grams_tmp));Serial.println();
+	sprintf(str_grams,"%c%s",minus_or_not ,str_grams_tmp);
 
 	display.setCursor(GRAM_DISPLAY_X, GRAM_DISPLAY_Y);
 	display.println(str_grams);
