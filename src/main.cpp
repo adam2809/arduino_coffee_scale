@@ -37,11 +37,13 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #include <limits.h>
+#include <deque>
 
 #define LOADCELL_DOUT_PIN  6
 #define LOADCELL_SCK_PIN  5
 
-#define AVG_TIMES 3
+#define AVG_TIMES 1
+#define AVG_FILTER_SIZE 5
 
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
@@ -51,7 +53,7 @@
 #define TIME_DISPLAY_X 0
 #define TIME_DISPLAY_Y 35
 
-#define DOUBLE_CLICKS_MAX_GAP 400
+#define DOUBLE_CLICKS_MAX_GAP 300
 
 HX711 scale;
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
@@ -72,6 +74,7 @@ button_t button{
 unsigned long timer_start_millis = ULONG_MAX;
 
 float calibration_factor = 819;
+std::deque<float> gram_vals_for_avg;
 
 void setup_scale(){
 	scale.begin(LOADCELL_DOUT_PIN, LOADCELL_SCK_PIN);
@@ -123,19 +126,22 @@ void manual_calibration_serial_input(){
 	scale.set_scale(calibration_factor); 
 }
 
+float get_avg_filter_value(){
+	float sum = 0.0;
+	for (int i = 0; i < gram_vals_for_avg.size(); i++){
+		sum+=gram_vals_for_avg[i];
+	}
+	return sum/gram_vals_for_avg.size();
+}
+
 void display_grams(){
-	float grams = scale.get_units(AVG_TIMES);
-	Serial.print("Reading: ");
-	Serial.print(grams, 3);
-	Serial.print(" g"); //Change this to kg and re-adjust the calibration factor if you follow SI units like a sane person
-	Serial.print(" calibration_factor: ");
-	Serial.print(calibration_factor);
-	Serial.println();
+	float grams_avg = get_avg_filter_value();
+	Serial.print("Avg grams: ");Serial.print(grams_avg);Serial.println();
 
 	char str_grams_tmp[6] = {0};
 	char str_grams[6] = {0};
 
-	dtostrf(grams, 4, 1, str_grams_tmp);
+	dtostrf(grams_avg, 4, 1, str_grams_tmp);
 	sprintf(str_grams,"%s G", str_grams_tmp);
 
 	display.setCursor(GRAM_DISPLAY_X, GRAM_DISPLAY_Y);
@@ -160,6 +166,19 @@ void display_time(){
 }
 
 void loop() {
+	float grams = scale.get_units(AVG_TIMES);
+	Serial.print("Reading: ");
+	Serial.print(grams, 3);
+	Serial.print(" g"); //Change this to kg and re-adjust the calibration factor if you follow SI units like a sane person
+	Serial.print(" calibration_factor: ");
+	Serial.print(calibration_factor);
+	Serial.println();
+	gram_vals_for_avg.push_front(grams);
+	if (gram_vals_for_avg.size() > AVG_FILTER_SIZE){
+		gram_vals_for_avg.pop_back();
+	}
+	
+	
 	display_grams();
 	display_time();
 
