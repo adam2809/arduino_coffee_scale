@@ -51,16 +51,20 @@
 #define TIME_DISPLAY_X 0
 #define TIME_DISPLAY_Y 35
 
+#define DOUBLE_CLICKS_MAX_GAP 500
+
 HX711 scale;
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
 struct button_t{
 	int is_clicked;
+	unsigned long last_clicked;
 	int pin;
 };
 button_t button{
 	false,
-	3
+	0,
+	2
 };
 
 unsigned long timer_start_millis = ULONG_MAX;
@@ -85,6 +89,7 @@ void setup_display(){
 }
 
 void button_click_cb(){
+	Serial.println("Interrupt");
 	button.is_clicked = true;
 }
 
@@ -95,6 +100,7 @@ void setup() {
 
 	setup_scale();
 	setup_display();
+	pinMode(INPUT_PULLUP,button.pin);
 	attachInterrupt(digitalPinToInterrupt(button.pin), button_click_cb, FALLING);
 }
 
@@ -154,9 +160,18 @@ void display_time(){
 void loop() {
 	display_grams();
 	display_time();
+
 	if(button.is_clicked){
-		scale.tare();
+		unsigned long curr_millis = millis();
+		Serial.println("Clicked");
+		if(curr_millis - button.last_clicked > DOUBLE_CLICKS_MAX_GAP){
+			// scale.tare();
+		}else{
+			timer_start_millis = curr_millis;
+		}
+		button.last_clicked = curr_millis;
 		button.is_clicked = false;
+
 	}
 
 	manual_calibration_serial_input();
