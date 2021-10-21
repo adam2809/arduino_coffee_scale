@@ -41,7 +41,7 @@
 #define LOADCELL_DOUT_PIN  6
 #define LOADCELL_SCK_PIN  5
 
-#define AVG_TIMES 5
+#define AVG_TIMES 3
 
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
@@ -51,19 +51,21 @@
 #define TIME_DISPLAY_X 0
 #define TIME_DISPLAY_Y 35
 
-#define DOUBLE_CLICKS_MAX_GAP 500
+#define DOUBLE_CLICKS_MAX_GAP 400
 
 HX711 scale;
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
 struct button_t{
-	int is_clicked;
+	bool is_clicked;
 	unsigned long last_clicked;
+	bool is_single_clicked;
 	int pin;
 };
 button_t button{
 	false,
 	0,
+	false,
 	2
 };
 
@@ -161,17 +163,27 @@ void loop() {
 	display_grams();
 	display_time();
 
+	unsigned long curr_millis = millis();
+
+	if (button.is_single_clicked && curr_millis - button.last_clicked > DOUBLE_CLICKS_MAX_GAP){
+		Serial.println("Taring");
+		scale.tare();
+		button.is_single_clicked = false;
+	}
 	if(button.is_clicked){
-		unsigned long curr_millis = millis();
 		Serial.println("Clicked");
 		if(curr_millis - button.last_clicked > DOUBLE_CLICKS_MAX_GAP){
-			// scale.tare();
+			if (!button.is_single_clicked){
+				Serial.println("Single click");
+				button.is_single_clicked = true;
+			}
 		}else{
+			Serial.println("Double click");
 			timer_start_millis = curr_millis;
+			button.is_single_clicked = false;
 		}
 		button.last_clicked = curr_millis;
 		button.is_clicked = false;
-
 	}
 
 	manual_calibration_serial_input();
