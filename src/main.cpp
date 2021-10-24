@@ -39,8 +39,11 @@
 #include <limits.h>
 #include <deque>
 
-#define LOADCELL_DOUT_PIN  6
-#define LOADCELL_SCK_PIN  5
+#define HX711_DOUT_PIN  6 //orange cable
+#define HX711_SCK_PIN  5 //blue cable
+// hx711 5v is red cable
+// hx711 gnd is brown cable
+
 
 #define AVG_TIMES 1
 #define AVG_FILTER_SIZE 5
@@ -77,7 +80,7 @@ float calibration_factor = 819;
 std::deque<float> gram_vals_for_avg;
 
 void setup_scale(){
-	scale.begin(LOADCELL_DOUT_PIN, LOADCELL_SCK_PIN);
+	scale.begin(HX711_DOUT_PIN, HX711_SCK_PIN);
 	scale.set_scale();
 	scale.tare();
 }
@@ -178,26 +181,10 @@ void display_time(){
 	display.println(str_time);	
 }
 
-void loop() {
-	float grams = scale.get_units(AVG_TIMES);
-	Serial.print("Reading: ");
-	Serial.print(grams, 3);
-	Serial.print(" g"); //Change this to kg and re-adjust the calibration factor if you follow SI units like a sane person
-	Serial.print(" calibration_factor: ");
-	Serial.print(calibration_factor);
-	Serial.println();
-	gram_vals_for_avg.push_front(grams);
-	if (gram_vals_for_avg.size() > AVG_FILTER_SIZE){
-		gram_vals_for_avg.pop_back();
-	}
-	
-	
-	display_grams();
-	display_time();
-
+void detect_clicks(){
 	unsigned long curr_millis = millis();
 
-	if (button.is_single_clicked && curr_millis - button.last_clicked > DOUBLE_CLICKS_MAX_GAP){
+	if (!button.is_clicked && button.is_single_clicked && curr_millis - button.last_clicked > DOUBLE_CLICKS_MAX_GAP){
 		Serial.println("Taring");
 		scale.tare();
 		button.is_single_clicked = false;
@@ -217,6 +204,26 @@ void loop() {
 		button.last_clicked = curr_millis;
 		button.is_clicked = false;
 	}
+}
+
+void loop() {
+	float grams = scale.get_units(AVG_TIMES);
+	Serial.print("Reading: ");
+	Serial.print(grams, 3);
+	Serial.print(" g"); //Change this to kg and re-adjust the calibration factor if you follow SI units like a sane person
+	Serial.print(" calibration_factor: ");
+	Serial.print(calibration_factor);
+	Serial.println();
+
+	gram_vals_for_avg.push_front(grams);
+	if (gram_vals_for_avg.size() > AVG_FILTER_SIZE){
+		gram_vals_for_avg.pop_back();
+	}
+	
+	display_grams();
+	display_time();
+
+	detect_clicks();
 
 	manual_calibration_serial_input();
 }
