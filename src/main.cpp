@@ -49,6 +49,7 @@
 #define AVG_TIMES 1
 #define AVG_FILTER_SIZE 5
 
+#define STEP_COUNT 6
 
 #define DOUBLE_CLICKS_MAX_GAP 300
 
@@ -72,6 +73,20 @@ unsigned long timer_start_millis = ULONG_MAX;
 
 float calibration_factor = 819;
 std::deque<float> gram_vals_for_avg;
+
+struct ingredient_t{
+	float grams;
+	char* name;
+};
+ingredient_t pancakes_recipie[STEP_COUNT] = {
+	{112.0,"Eggs"},
+	{161.0,"Buttermilk"},
+	{28.2,"Butter"},
+	{42.5,"Honey"},
+	{65.0,"Flour"},
+	{1.5,"Salt"}
+};
+int curr_step = 0;
 
 void setup_scale(){
 	scale.begin(HX711_DOUT_PIN, HX711_SCK_PIN);
@@ -137,7 +152,7 @@ void detect_clicks(){
 			}
 		}else{
 			Serial.println("Double click");
-			timer_start_millis = curr_millis;
+			curr_step++;
 			button.is_single_clicked = false;
 		}
 		button.last_clicked = curr_millis;
@@ -160,7 +175,7 @@ void loop() {
 	}
 	
 	ssd1306.display_grams(get_avg_filter_value());
-	ssd1306.display_time(timer_start_millis);
+	ssd1306.display_text(pancakes_recipie[curr_step].name);
 
 	detect_clicks();
 

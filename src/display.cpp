@@ -11,18 +11,9 @@ void Scale_SSD1306::setup(){
 	this->setTextColor(WHITE);
 }
 
-
-void Scale_SSD1306::display_time(int timer_start_millis){
-	long millis_to_display;
-	if (timer_start_millis == ULONG_MAX){
-		millis_to_display = 0;
-	}else{
-		millis_to_display = millis() - timer_start_millis;
-	}
-	int seconds_to_display = (millis_to_display/1000)%60;
-	int minutes_to_display = (millis_to_display/1000)/60;
+void Scale_SSD1306::display_text(char* txt){
 	char str_time[7] = {0};
-	snprintf(str_time,7," %02d:%02d",minutes_to_display,seconds_to_display);
+	snprintf(str_time,7,"%s",txt);
 	this->setCursor(TIME_DISPLAY_X, TIME_DISPLAY_Y);
 	this->println(str_time);	
 }
