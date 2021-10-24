@@ -38,6 +38,7 @@
 #include <Adafruit_SSD1306.h>
 #include <limits.h>
 #include <deque>
+#include "display.h"
 
 #define HX711_DOUT_PIN  6 //orange cable
 #define HX711_SCK_PIN  5 //blue cable
@@ -48,18 +49,11 @@
 #define AVG_TIMES 1
 #define AVG_FILTER_SIZE 5
 
-#define SCREEN_WIDTH 128
-#define SCREEN_HEIGHT 64
-
-#define GRAM_DISPLAY_X 0
-#define GRAM_DISPLAY_Y 5
-#define TIME_DISPLAY_X 0
-#define TIME_DISPLAY_Y 35
 
 #define DOUBLE_CLICKS_MAX_GAP 300
 
 HX711 scale;
-Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
+Scale_SSD1306 ssd1306(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
 struct button_t{
 	bool is_clicked;
@@ -85,17 +79,6 @@ void setup_scale(){
 	scale.tare();
 }
 
-void setup_display(){
-	if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { 
-		Serial.println(F("SSD1306 allocation failed"));
-		for(;;);
-	}
-	display.setRotation(0);
-	display.clearDisplay();
-	display.setTextSize(3); 
-	display.setTextColor(WHITE);
-}
-
 void button_click_cb(){
 	Serial.println("Interrupt");
 	button.is_clicked = true;
@@ -107,7 +90,7 @@ void setup() {
 	Serial.println("Press - or z to decrease calibration factor");
 
 	setup_scale();
-	setup_display();
+	ssd1306.setup();
 	pinMode(INPUT_PULLUP,button.pin);
 	attachInterrupt(digitalPinToInterrupt(button.pin), button_click_cb, FALLING);
 }
@@ -135,50 +118,6 @@ float get_avg_filter_value(){
 		sum+=gram_vals_for_avg[i];
 	}
 	return sum/gram_vals_for_avg.size();
-}
-
-void display_grams(){
-	float grams_avg = get_avg_filter_value();
-	Serial.print("Avg grams: ");Serial.print(grams_avg);Serial.println();
-
-	char str_grams_tmp[7] = {0};
-	char str_grams[7] = {0};
-	char minus_or_not;
-
-	if (grams_avg < 0){
-		grams_avg*=-1;
-		minus_or_not = '-';
-	}else{
-		minus_or_not = ' ';
-	}
-
-	if(grams_avg >= 1000){
-		grams_avg = 999.9;
-	}
-
-	dtostrf(grams_avg, 3, 1, str_grams_tmp);
-	Serial.print("Avg grams str len: ");Serial.print(strlen(str_grams_tmp));Serial.println();
-	sprintf(str_grams,"%c%s",minus_or_not ,str_grams_tmp);
-
-	display.setCursor(GRAM_DISPLAY_X, GRAM_DISPLAY_Y);
-	display.println(str_grams);
-	display.display();
-	display.clearDisplay();
-}
-
-void display_time(){
-	long millis_to_display;
-	if (timer_start_millis == ULONG_MAX){
-		millis_to_display = 0;
-	}else{
-		millis_to_display = millis() - timer_start_millis;
-	}
-	int seconds_to_display = (millis_to_display/1000)%60;
-	int minutes_to_display = (millis_to_display/1000)/60;
-	char str_time[7] = {0};
-	snprintf(str_time,7," %02d:%02d",minutes_to_display,seconds_to_display);
-	display.setCursor(TIME_DISPLAY_X, TIME_DISPLAY_Y);
-	display.println(str_time);	
 }
 
 void detect_clicks(){
@@ -220,8 +159,8 @@ void loop() {
 		gram_vals_for_avg.pop_back();
 	}
 	
-	display_grams();
-	display_time();
+	ssd1306.display_grams(get_avg_filter_value());
+	ssd1306.display_time(timer_start_millis);
 
 	detect_clicks();
 
