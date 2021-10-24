@@ -49,7 +49,7 @@
 #define AVG_TIMES 1
 #define AVG_FILTER_SIZE 5
 
-#define STEP_COUNT 6
+#define STEP_COUNT 7
 
 #define DOUBLE_CLICKS_MAX_GAP 300
 
@@ -80,11 +80,12 @@ struct ingredient_t{
 };
 ingredient_t pancakes_recipie[STEP_COUNT] = {
 	{112.0,"Eggs"},
-	{161.0,"Buttermilk"},
+	{161.0,"Butmlk"},
 	{28.2,"Butter"},
 	{42.5,"Honey"},
 	{65.0,"Flour"},
-	{1.5,"Salt"}
+	{1.5,"Salt"},
+	{0.0,"Finish"}
 };
 int curr_step = 0;
 
@@ -95,14 +96,14 @@ void setup_scale(){
 }
 
 void button_click_cb(){
-	Serial.println("Interrupt");
+	// Serial.println("Interrupt");
 	button.is_clicked = true;
 }
 
 void setup() {
 	Serial.begin(9600);
-	Serial.println("Press + or a to increase calibration factor");
-	Serial.println("Press - or z to decrease calibration factor");
+	// Serial.println("Press + or a to increase calibration factor");
+	// Serial.println("Press - or z to decrease calibration factor");
 
 	setup_scale();
 	ssd1306.setup();
@@ -113,7 +114,7 @@ void setup() {
 void manual_calibration_serial_input(){
 	if(Serial.available()){
 		char temp = Serial.read();
-		Serial.print("Reading char: ");
+		// Serial.print("Reading char: ");
 		Serial.println(temp);
 
 		if(temp == '+' || temp == 'a')
@@ -139,20 +140,22 @@ void detect_clicks(){
 	unsigned long curr_millis = millis();
 
 	if (!button.is_clicked && button.is_single_clicked && curr_millis - button.last_clicked > DOUBLE_CLICKS_MAX_GAP){
-		Serial.println("Taring");
+		// Serial.println("Taring");
 		scale.tare();
 		button.is_single_clicked = false;
 	}
 	if(button.is_clicked){
-		Serial.println("Clicked");
+		// Serial.println("Clicked");
 		if(curr_millis - button.last_clicked > DOUBLE_CLICKS_MAX_GAP){
 			if (!button.is_single_clicked){
-				Serial.println("Single click");
+				// Serial.println("Single click");
 				button.is_single_clicked = true;
 			}
 		}else{
-			Serial.println("Double click");
+			// Serial.println("Double click");
 			curr_step++;
+			curr_step%=STEP_COUNT;
+			scale.tare();
 			button.is_single_clicked = false;
 		}
 		button.last_clicked = curr_millis;
@@ -162,19 +165,19 @@ void detect_clicks(){
 
 void loop() {
 	float grams = scale.get_units(AVG_TIMES);
-	Serial.print("Reading: ");
-	Serial.print(grams, 3);
-	Serial.print(" g"); //Change this to kg and re-adjust the calibration factor if you follow SI units like a sane person
-	Serial.print(" calibration_factor: ");
-	Serial.print(calibration_factor);
-	Serial.println();
+	// Serial.print("Reading: ");
+	// Serial.print(grams, 3);
+	// Serial.print(" g"); //Change this to kg and re-adjust the calibration factor if you follow SI units like a sane person
+	// Serial.print(" calibration_factor: ");
+	// Serial.print(calibration_factor);
+	// Serial.println();
 
 	gram_vals_for_avg.push_front(grams);
 	if (gram_vals_for_avg.size() > AVG_FILTER_SIZE){
 		gram_vals_for_avg.pop_back();
 	}
 	
-	ssd1306.display_grams(get_avg_filter_value());
+	ssd1306.display_grams(get_avg_filter_value()-pancakes_recipie[curr_step].grams);
 	ssd1306.display_text(pancakes_recipie[curr_step].name);
 
 	detect_clicks();

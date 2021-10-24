@@ -19,7 +19,7 @@ void Scale_SSD1306::display_text(char* txt){
 }
 
 void Scale_SSD1306::display_grams(float grams_avg){
-	Serial.print("Avg grams: ");Serial.print(grams_avg);Serial.println();
+	// Serial.print("Avg grams: ");Serial.print(grams_avg);Serial.println();
 
 	char str_grams_tmp[7] = {0};
 	char str_grams[7] = {0};
@@ -37,7 +37,7 @@ void Scale_SSD1306::display_grams(float grams_avg){
 	}
 
 	dtostrf(grams_avg, 3, 1, str_grams_tmp);
-	Serial.print("Avg grams str len: ");Serial.print(strlen(str_grams_tmp));Serial.println();
+	// Serial.print("Avg grams str len: ");Serial.print(strlen(str_grams_tmp));Serial.println();
 	sprintf(str_grams,"%c%s",minus_or_not ,str_grams_tmp);
 
 	this->setCursor(GRAM_DISPLAY_X, GRAM_DISPLAY_Y);
