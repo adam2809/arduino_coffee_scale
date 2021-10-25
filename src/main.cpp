@@ -79,7 +79,7 @@ struct ingredient_t{
 	char* name;
 };
 ingredient_t pancakes_recipie[STEP_COUNT] = {
-	{112.0,"Eggs"},
+	{112.0,"Eggs*"},
 	{161.0,"Butmlk"},
 	{28.2,"Butter"},
 	{42.5,"Honey"},
@@ -87,6 +87,7 @@ ingredient_t pancakes_recipie[STEP_COUNT] = {
 	{1.5,"Salt"},
 	{0.0,"Finish"}
 };
+float normalization_factor = 1.0;
 int curr_step = 0;
 
 void setup_scale(){
@@ -153,9 +154,13 @@ void detect_clicks(){
 			}
 		}else{
 			// Serial.println("Double click");
+			if (curr_step == 0){
+				normalization_factor = get_avg_filter_value()/pancakes_recipie[0].grams;
+			}
 			curr_step++;
 			curr_step%=STEP_COUNT;
 			scale.tare();
+			
 			button.is_single_clicked = false;
 		}
 		button.last_clicked = curr_millis;
@@ -176,8 +181,15 @@ void loop() {
 	if (gram_vals_for_avg.size() > AVG_FILTER_SIZE){
 		gram_vals_for_avg.pop_back();
 	}
+	int grams_to_display = 0.0;
 	
-	ssd1306.display_grams(get_avg_filter_value()-pancakes_recipie[curr_step].grams);
+	if (curr_step == 0){
+		grams_to_display = get_avg_filter_value();
+	}else{
+		grams_to_display = get_avg_filter_value()-(pancakes_recipie[curr_step].grams*normalization_factor);
+	}
+	
+	ssd1306.display_grams(grams_to_display);
 	ssd1306.display_text(pancakes_recipie[curr_step].name);
 
 	detect_clicks();
