@@ -1,0 +1,201 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L MCU_Module:Arduino_Nano_v3.x A?
+U 1 1 618E753F
+P 6150 4750
+F 0 "A?" V 6104 3707 50  0000 R CNN
+F 1 "Arduino_Nano_v3.x" V 6195 3707 50  0000 R CNN
+F 2 "Module:Arduino_Nano" H 6150 4750 50  0001 C CIN
+F 3 "http://www.mouser.com/pdfdocs/Gravitech_Arduino_Nano3_0.pdf" H 6150 4750 50  0001 C CNN
+	1    6150 4750
+	0    1    1    0   
+$EndComp
+$Comp
+L CoffeScale:HX711_board U?
+U 1 1 618ED7F8
+P 5850 3200
+F 0 "U?" H 5850 3325 50  0000 C CNN
+F 1 "HX711_board" H 5850 3234 50  0000 C CNN
+F 2 "" H 5850 3200 50  0001 C CNN
+F 3 "" H 5850 3200 50  0001 C CNN
+	1    5850 3200
+	1    0    0    -1  
+$EndComp
+$Comp
+L CoffeScale:TP4056_charger C?
+U 1 1 618F0B85
+P 6200 1600
+F 0 "C?" H 6528 1476 50  0000 L CNN
+F 1 "TP4056_charger" H 6528 1385 50  0000 L CNN
+F 2 "" H 6200 1600 50  0001 C CNN
+F 3 "" H 6200 1600 50  0001 C CNN
+	1    6200 1600
+	1    0    0    -1  
+$EndComp
+$Comp
+L CoffeScale:SSD1306_128x32 D?
+U 1 1 618F1A38
+P 5000 5950
+F 0 "D?" H 4942 5335 50  0000 C CNN
+F 1 "SSD1306_128x32" H 4942 5426 50  0000 C CNN
+F 2 "" H 5000 5950 50  0001 C CNN
+F 3 "" H 5000 5950 50  0001 C CNN
+	1    5000 5950
+	-1   0    0    1   
+$EndComp
+$Comp
+L CoffeScale:MT3608_step_up R?
+U 1 1 618F5FB4
+P 6400 2450
+F 0 "R?" V 6354 2438 50  0000 L CNN
+F 1 "MT3608_step_up" V 6445 2438 50  0000 L CNN
+F 2 "" H 6400 2450 50  0001 C CNN
+F 3 "" H 6400 2450 50  0001 C CNN
+	1    6400 2450
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	5800 1800 5600 1800
+Wire Wire Line
+	5600 1800 5600 2050
+Wire Wire Line
+	5600 2050 6100 2050
+Wire Wire Line
+	5800 1850 5800 1950
+Wire Wire Line
+	5800 1950 6300 1950
+Wire Wire Line
+	6300 1950 6300 2050
+$Comp
+L power:+BATT #PWR?
+U 1 1 61907218
+P 5450 1500
+F 0 "#PWR?" H 5450 1350 50  0001 C CNN
+F 1 "+BATT" V 5465 1627 50  0000 L CNN
+F 2 "" H 5450 1500 50  0001 C CNN
+F 3 "" H 5450 1500 50  0001 C CNN
+	1    5450 1500
+	0    -1   -1   0   
+$EndComp
+$Comp
+L power:-BATT #PWR?
+U 1 1 61908632
+P 5450 1650
+F 0 "#PWR?" H 5450 1500 50  0001 C CNN
+F 1 "-BATT" V 5465 1777 50  0000 L CNN
+F 2 "" H 5450 1650 50  0001 C CNN
+F 3 "" H 5450 1650 50  0001 C CNN
+	1    5450 1650
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	5550 1650 5550 1750
+Wire Wire Line
+	5550 1750 5800 1750
+Wire Wire Line
+	5800 1500 5800 1700
+Wire Wire Line
+	5550 1650 5450 1650
+Wire Wire Line
+	5450 1500 5800 1500
+$Comp
+L power:GND #PWR?
+U 1 1 61918E2F
+P 6650 3300
+F 0 "#PWR?" H 6650 3050 50  0001 C CNN
+F 1 "GND" V 6655 3172 50  0000 R CNN
+F 2 "" H 6650 3300 50  0001 C CNN
+F 3 "" H 6650 3300 50  0001 C CNN
+	1    6650 3300
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	6650 3300 6450 3300
+$Comp
+L power:+5V #PWR?
+U 1 1 61919C54
+P 6650 3550
+F 0 "#PWR?" H 6650 3400 50  0001 C CNN
+F 1 "+5V" V 6665 3678 50  0000 L CNN
+F 2 "" H 6650 3550 50  0001 C CNN
+F 3 "" H 6650 3550 50  0001 C CNN
+	1    6650 3550
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	6650 3550 6450 3550
+$Comp
+L power:GND #PWR?
+U 1 1 6191D9E1
+P 5650 5550
+F 0 "#PWR?" H 5650 5300 50  0001 C CNN
+F 1 "GND" V 5655 5422 50  0000 R CNN
+F 2 "" H 5650 5550 50  0001 C CNN
+F 3 "" H 5650 5550 50  0001 C CNN
+	1    5650 5550
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	5650 5550 5450 5550
+$Comp
+L power:+5V #PWR?
+U 1 1 6191D9E8
+P 5650 5650
+F 0 "#PWR?" H 5650 5500 50  0001 C CNN
+F 1 "+5V" V 5665 5778 50  0000 L CNN
+F 2 "" H 5650 5650 50  0001 C CNN
+F 3 "" H 5650 5650 50  0001 C CNN
+	1    5650 5650
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	5650 5650 5450 5650
+Wire Wire Line
+	6450 3450 7100 3450
+Wire Wire Line
+	7200 3800 6150 3800
+Wire Wire Line
+	6450 3400 7200 3400
+Wire Wire Line
+	6150 3800 6150 4250
+Wire Wire Line
+	7100 3700 7100 3450
+Wire Wire Line
+	6250 3700 6250 4250
+Wire Wire Line
+	6250 3700 7100 3700
+Wire Wire Line
+	7200 3400 7200 3800
+Wire Wire Line
+	5150 2850 6100 2850
+Wire Wire Line
+	5150 2850 5150 4750
+Wire Wire Line
+	7300 4950 7300 2850
+Wire Wire Line
+	7300 2850 6300 2850
+Wire Wire Line
+	7150 4950 7300 4950
+Wire Wire Line
+	5450 5750 6050 5750
+Wire Wire Line
+	6050 5250 6050 5750
+Wire Wire Line
+	5450 5850 6150 5850
+Wire Wire Line
+	6150 5250 6150 5850
+$EndSCHEMATC
