@@ -26,7 +26,7 @@ class Scale_SSD1306 : public Adafruit_SSD1306{
         ){};
 
         void setup();
-        void display_text(char* txt);
+        void display_time(int timer_start_millis);
         void display_grams(float grams_avg);
 
 };
