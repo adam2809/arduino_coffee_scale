@@ -61,16 +61,22 @@ struct button_t{
 	bool is_single_clicked;
 	int pin;
 };
-button_t button{
+button_t button_tare{
 	false,
 	0,
 	false,
 	2
 };
+button_t button_timer{
+	false,
+	0,
+	false,
+	3
+};
 
 unsigned long timer_start_millis = ULONG_MAX;
 
-float calibration_factor = 819;
+float calibration_factor = 837.00;
 std::deque<float> gram_vals_for_avg;
 
 void setup_scale(){
@@ -79,9 +85,13 @@ void setup_scale(){
 	scale.tare();
 }
 
-void button_click_cb(){
+void button_tare_click_cb(){
 	Serial.println("Interrupt");
-	button.is_clicked = true;
+	button_tare.is_clicked = true;
+}
+void button_timer_click_cb(){
+	Serial.println("Interrupt");
+	button_timer.is_clicked = true;
 }
 
 void setup() {
@@ -91,8 +101,10 @@ void setup() {
 
 	setup_scale();
 	ssd1306.setup();
-	pinMode(INPUT_PULLUP,button.pin);
-	attachInterrupt(digitalPinToInterrupt(button.pin), button_click_cb, FALLING);
+	pinMode(INPUT_PULLUP,button_tare.pin);
+	attachInterrupt(digitalPinToInterrupt(button_tare.pin), button_tare_click_cb, FALLING);
+	pinMode(INPUT_PULLUP,button_timer.pin);
+	attachInterrupt(digitalPinToInterrupt(button_timer.pin), button_timer_click_cb, FALLING);
 }
 
 void manual_calibration_serial_input(){
@@ -123,25 +135,16 @@ float get_avg_filter_value(){
 void detect_clicks(){
 	unsigned long curr_millis = millis();
 
-	if (!button.is_clicked && button.is_single_clicked && curr_millis - button.last_clicked > DOUBLE_CLICKS_MAX_GAP){
+	if (button_tare.is_clicked){
 		Serial.println("Taring");
 		scale.tare();
-		button.is_single_clicked = false;
+		button_tare.is_clicked = false;
 	}
-	if(button.is_clicked){
-		Serial.println("Clicked");
-		if(curr_millis - button.last_clicked > DOUBLE_CLICKS_MAX_GAP){
-			if (!button.is_single_clicked){
-				Serial.println("Single click");
-				button.is_single_clicked = true;
-			}
-		}else{
-			Serial.println("Double click");
-			timer_start_millis = curr_millis;
-			button.is_single_clicked = false;
-		}
-		button.last_clicked = curr_millis;
-		button.is_clicked = false;
+
+	if(button_timer.is_clicked){
+		Serial.println("Zeroing timer");
+		timer_start_millis = millis();
+		button_timer.is_clicked = false;
 	}
 }
 

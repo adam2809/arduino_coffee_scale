@@ -12,7 +12,7 @@ void Scale_SSD1306::setup(){
 }
 
 
-void Scale_SSD1306::display_time(int timer_start_millis){
+void Scale_SSD1306::display_time(unsigned long timer_start_millis){
 	long millis_to_display;
 	if (timer_start_millis == ULONG_MAX){
 		millis_to_display = 0;
@@ -28,8 +28,6 @@ void Scale_SSD1306::display_time(int timer_start_millis){
 }
 
 void Scale_SSD1306::display_grams(float grams_avg){
-	Serial.print("Avg grams: ");Serial.print(grams_avg);Serial.println();
-
 	char str_grams_tmp[7] = {0};
 	char str_grams[7] = {0};
 	char minus_or_not;
@@ -46,7 +44,6 @@ void Scale_SSD1306::display_grams(float grams_avg){
 	}
 
 	dtostrf(grams_avg, 3, 1, str_grams_tmp);
-	Serial.print("Avg grams str len: ");Serial.print(strlen(str_grams_tmp));Serial.println();
 	sprintf(str_grams,"%c%s",minus_or_not ,str_grams_tmp);
 
 	this->setCursor(GRAM_DISPLAY_X, GRAM_DISPLAY_Y);
