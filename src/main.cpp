@@ -40,36 +40,23 @@
 #include <deque>
 #include "display.h"
 
-#define HX711_DOUT_PIN  6 //orange cable
-#define HX711_SCK_PIN  5 //blue cable
-// hx711 5v is red cable
-// hx711 gnd is brown cable
+#define HX711_DOUT_PIN  6
+#define HX711_SCK_PIN  5
 
-
-#define AVG_TIMES 1
 #define AVG_FILTER_SIZE 5
-
-
-#define DOUBLE_CLICKS_MAX_GAP 300
 
 HX711 scale;
 Scale_SSD1306 ssd1306(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
 struct button_t{
 	bool is_clicked;
-	unsigned long last_clicked;
-	bool is_single_clicked;
 	int pin;
 };
 button_t button_tare{
 	false,
-	0,
-	false,
 	2
 };
 button_t button_timer{
-	false,
-	0,
 	false,
 	3
 };
@@ -86,11 +73,11 @@ void setup_scale(){
 }
 
 void button_tare_click_cb(){
-	Serial.println("Interrupt");
+	Serial.println("Interrupt tare");
 	button_tare.is_clicked = true;
 }
 void button_timer_click_cb(){
-	Serial.println("Interrupt");
+	Serial.println("Interrupt time");
 	button_timer.is_clicked = true;
 }
 
@@ -149,7 +136,7 @@ void detect_clicks(){
 }
 
 void loop() {
-	float grams = scale.get_units(AVG_TIMES);
+	float grams = scale.get_units();
 	Serial.print("Reading: ");
 	Serial.print(grams, 3);
 	Serial.print(" g"); //Change this to kg and re-adjust the calibration factor if you follow SI units like a sane person
