@@ -39,6 +39,7 @@
 #include <limits.h>
 #include <deque>
 #include "display.h"
+// #include "button.h"
 
 #define HX711_DOUT_PIN  6
 #define HX711_SCK_PIN  5
@@ -49,16 +50,16 @@ HX711 scale;
 Scale_SSD1306 ssd1306(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
 struct button_t{
-	bool is_clicked;
+	bool prev;
 	int pin;
 };
 button_t button_tare{
-	false,
+	HIGH,
 	2
 };
 button_t button_timer{
-	false,
-	3
+	HIGH,
+	9
 };
 
 unsigned long timer_start_millis = ULONG_MAX;
@@ -72,15 +73,6 @@ void setup_scale(){
 	scale.tare();
 }
 
-void button_tare_click_cb(){
-	Serial.println("Interrupt tare");
-	button_tare.is_clicked = true;
-}
-void button_timer_click_cb(){
-	Serial.println("Interrupt time");
-	button_timer.is_clicked = true;
-}
-
 void setup() {
 	Serial.begin(9600);
 	Serial.println("Press + or a to increase calibration factor");
@@ -89,9 +81,7 @@ void setup() {
 	setup_scale();
 	ssd1306.setup();
 	pinMode(INPUT_PULLUP,button_tare.pin);
-	attachInterrupt(digitalPinToInterrupt(button_tare.pin), button_tare_click_cb, FALLING);
-	pinMode(INPUT_PULLUP,button_timer.pin);
-	attachInterrupt(digitalPinToInterrupt(button_timer.pin), button_timer_click_cb, FALLING);
+	pinMode(INPUT,button_timer.pin);
 }
 
 void manual_calibration_serial_input(){
@@ -121,18 +111,26 @@ float get_avg_filter_value(){
 
 void detect_clicks(){
 	unsigned long curr_millis = millis();
-
-	if (button_tare.is_clicked){
+	
+	bool button_tare_val = digitalRead(button_tare.pin);
+	Serial.print("Tare val: ");
+	Serial.println(button_tare_val);
+	if (button_tare.prev == HIGH && button_tare_val == LOW){
 		Serial.println("Taring");
 		scale.tare();
-		button_tare.is_clicked = false;
+		button_tare.prev = false;
 	}
+	button_tare.prev = button_tare_val;
 
-	if(button_timer.is_clicked){
+	bool button_timer_val = digitalRead(button_timer.pin);
+	Serial.print("Timer val: ");
+	Serial.println(button_timer_val);
+	if(button_timer.prev == HIGH && button_timer_val == LOW){
 		Serial.println("Zeroing timer");
 		timer_start_millis = millis();
-		button_timer.is_clicked = false;
+		button_timer.prev = false;
 	}
+	button_timer.prev = button_timer_val;
 }
 
 void loop() {
