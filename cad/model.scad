@@ -23,7 +23,7 @@ module load_plate(){
     load_plate_attachment_screw_hole_depth = 6;
     load_plate_attachment_thickness = load_plate_height - load_plate_thickness_top + load_plate_gap - load_cell_thickness;
 
-    load_plate_attachment_origin_vec = [
+    load_plate_attachment_top_vec = [
         (load_plate_side_len-load_cell_attachment_top_x)/2,
         (load_plate_side_len-load_plate_thickness_side)-(load_plate_side_len - load_plate_thickness_side*2 - load_cell_length)/2,
         load_plate_height-load_plate_thickness_top-load_plate_attachment_thickness
@@ -38,14 +38,30 @@ module load_plate(){
                 }
             }
             
-            translate(load_plate_attachment_origin_vec){
-                cube([load_cell_attachment_top_x,load_cell_attachment_top_y,load_plate_attachment_thickness+fi]);
+            translate([
+                load_plate_attachment_top_vec[0]-load_plate_attachment_thickness,
+                load_plate_attachment_top_vec[1]-load_plate_attachment_thickness,
+                load_plate_attachment_top_vec[2]
+            ]){
+                difference(){
+                    cube([
+                        load_cell_attachment_top_x+load_plate_attachment_thickness*2,
+                        load_cell_attachment_top_y+load_plate_attachment_thickness*2,
+                        load_plate_attachment_thickness+fi
+                    ]);
+                    rotate([0,90,0]){
+                        cylinder(h=load_cell_attachment_top_x+load_plate_attachment_thickness*2,r=load_plate_attachment_thickness);
+                    }
+                    rotate([-90,0,0]){
+                        cylinder(h=load_cell_attachment_top_y+load_plate_attachment_thickness*2,r=load_plate_attachment_thickness);
+                    }
+                }
             }
         }
         translate([
-            load_plate_attachment_origin_vec[0],
-            load_plate_attachment_origin_vec[1],
-            load_plate_attachment_origin_vec[2]-fi
+            load_plate_attachment_top_vec[0],
+            load_plate_attachment_top_vec[1],
+            load_plate_attachment_top_vec[2]-fi
         ]){
             translate([(load_cell_attachment_top_x - load_cell_attachment_screw_spacing)/2,load_cell_attachment_top_y/2]){
                 cylinder(r=load_plate_attachment_screw_radious, h=load_plate_attachment_screw_hole_depth+fi, center=true);
