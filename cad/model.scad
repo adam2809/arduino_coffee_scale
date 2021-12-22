@@ -15,6 +15,15 @@ module chamfered_open_box(size_vec,top_thickness,side_thickness){
     }
 }
 
+module screw_holes(spacing,radious,depth){
+    translate([-spacing/2,0]){
+        cylinder(r=radious, h=depth);
+    }
+    translate([spacing/2,0]) {
+        cylinder(r=radious, h=depth);
+    }
+}
+
 module load_plate(){
     load_plate_side_len = 130;
     load_plate_height = 12;
@@ -77,16 +86,11 @@ module load_plate(){
         }
         // screw holes
         translate([
-            load_plate_attachment_top_vec[0],
-            load_plate_attachment_top_vec[1],
+            load_plate_attachment_top_vec[0]+load_cell_attachment_top_x/2,
+            load_plate_attachment_top_vec[1]+load_cell_attachment_top_y/2,
             load_plate_attachment_top_vec[2]-fi
         ]){
-            translate([(load_cell_attachment_top_x - load_cell_attachment_screw_spacing)/2,load_cell_attachment_top_y/2]){
-                cylinder(r=load_plate_attachment_screw_radious, h=load_plate_attachment_screw_hole_depth+fi, center=true);
-                translate([load_cell_attachment_screw_spacing,0]) {
-                    cylinder(r=load_plate_attachment_screw_radious, h=load_plate_attachment_screw_hole_depth+fi, center=true);
-                }
-            }
+            screw_holes(load_cell_attachment_screw_spacing,load_plate_attachment_screw_radious,load_plate_attachment_screw_hole_depth+fi);
         }
     }
 }
