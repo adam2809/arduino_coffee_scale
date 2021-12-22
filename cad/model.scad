@@ -1,5 +1,5 @@
-// $fa = 1;
-// $fs = 0.4;
+$fa = 1;
+$fs = 0.4;
 
 use <Chamfers-for-OpenSCAD/Chamfer.scad>;
 
@@ -54,6 +54,19 @@ module load_plate(){
                     }
                     rotate([-90,0,0]){
                         cylinder(h=load_cell_attachment_top_y+load_plate_attachment_thickness*2,r=load_plate_attachment_thickness);
+                    }
+                    
+                    translate([
+                        load_cell_attachment_top_x+load_plate_attachment_thickness*2,
+                        load_cell_attachment_top_y+load_plate_attachment_thickness*2,
+                        0
+                    ]){
+                        rotate([0,-90,0]){
+                            cylinder(h=load_cell_attachment_top_x+load_plate_attachment_thickness*2,r=load_plate_attachment_thickness);
+                        }
+                        rotate([90,0,0]){
+                            cylinder(h=load_cell_attachment_top_y+load_plate_attachment_thickness*2,r=load_plate_attachment_thickness);
+                        }
                     }
                 }
             }
