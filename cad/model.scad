@@ -1,5 +1,5 @@
-// $fa = 1;
-// $fs = 0.4;
+$fa = 1;
+$fs = 0.4;
 
 use <Chamfers-for-OpenSCAD/Chamfer.scad>;
 
@@ -21,6 +21,42 @@ module screw_holes(spacing,radious,depth){
     }
     translate([spacing/2,0]) {
         cylinder(r=radious, h=depth);
+    }
+}
+
+module load_cell_attachment(size_vec){
+    difference(){
+        cube([
+            size_vec[0]+size_vec[2]*2,
+            size_vec[1]+size_vec[2]*2,
+            size_vec[2]
+        ]);
+
+        translate([
+            0,
+            0,
+            size_vec[2]
+        ]){
+            rotate([0,90,0]){
+                cylinder(h=size_vec[0]+size_vec[2]*2,r=size_vec[2]);
+            }
+            rotate([-90,0,0]){
+                cylinder(h=size_vec[1]+size_vec[2]*2,r=size_vec[2]);
+            }
+        }
+        
+        translate([
+            size_vec[0]+size_vec[2]*2,
+            size_vec[1]+size_vec[2]*2,
+            size_vec[2]
+        ]){
+            rotate([0,-90,0]){
+                cylinder(h=size_vec[0]+size_vec[2]*2,r=size_vec[2]);
+            }
+            rotate([90,0,0]){
+                cylinder(h=size_vec[1]+size_vec[2]*2,r=size_vec[2]);
+            }
+        }
     }
 }
 
