@@ -89,34 +89,11 @@ module load_plate(){
             
             translate([
                 load_plate_attachment_top_vec[0]-load_plate_attachment_thickness,
-                load_plate_attachment_top_vec[1]-load_plate_attachment_thickness,
-                load_plate_attachment_top_vec[2]
+                load_plate_attachment_top_vec[1]+load_plate_attachment_thickness+load_cell_attachment_top_y,
+                load_plate_attachment_top_vec[2]+load_plate_attachment_thickness+fi
             ]){
-                difference(){
-                    cube([
-                        load_cell_attachment_top_x+load_plate_attachment_thickness*2,
-                        load_cell_attachment_top_y+load_plate_attachment_thickness*2,
-                        load_plate_attachment_thickness+fi
-                    ]);
-                    rotate([0,90,0]){
-                        cylinder(h=load_cell_attachment_top_x+load_plate_attachment_thickness*2,r=load_plate_attachment_thickness);
-                    }
-                    rotate([-90,0,0]){
-                        cylinder(h=load_cell_attachment_top_y+load_plate_attachment_thickness*2,r=load_plate_attachment_thickness);
-                    }
-                    
-                    translate([
-                        load_cell_attachment_top_x+load_plate_attachment_thickness*2,
-                        load_cell_attachment_top_y+load_plate_attachment_thickness*2,
-                        0
-                    ]){
-                        rotate([0,-90,0]){
-                            cylinder(h=load_cell_attachment_top_x+load_plate_attachment_thickness*2,r=load_plate_attachment_thickness);
-                        }
-                        rotate([90,0,0]){
-                            cylinder(h=load_cell_attachment_top_y+load_plate_attachment_thickness*2,r=load_plate_attachment_thickness);
-                        }
-                    }
+                rotate([180,0,0]){
+                    load_cell_attachment([load_cell_attachment_top_x,load_cell_attachment_top_y,load_plate_attachment_thickness+fi]);
                 }
             }
         }
@@ -131,5 +108,26 @@ module load_plate(){
     }
 }
 
+module body(size_vec,side_thickness,bottom_thickness,gap){
+
+    translate([0,size_vec[1],-gap]){
+        rotate([180,0,0]){
+            chamfered_open_box(size_vec,bottom_thickness,side_thickness);
+        }
+    }
+}
+
+load_plate_side_len = 130;
+load_plate_height = 12;
+load_plate_thickness_top = 5.2;
+load_plate_thickness_side = 3.2;
+load_plate_gap = 3;
+
 load_plate();
+body(
+    [load_plate_side_len,load_plate_side_len,load_plate_height],
+    load_plate_thickness_side,
+    load_plate_thickness_top,
+    load_plate_gap
+);
 
