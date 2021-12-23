@@ -1,5 +1,5 @@
-// $fa = 1;
-// $fs = 0.4;
+$fa = 1;
+$fs = 0.4;
 
 use <Chamfers-for-OpenSCAD/Chamfer.scad>;
 
@@ -71,7 +71,7 @@ module load_plate(
 
     load_plate_attachment_top_vec = [
         (size_vec[0]-load_cell_attachment_top_x)/2,
-        (size_vec[1]-side_thickness)-(size_vec[1] - side_thickness*2 - load_cell_length)/2,
+        (size_vec[1] - side_thickness*2 - load_cell_length)/2,
         size_vec[2]-top_thickness-load_plate_attachment_thickness
     ];
 
@@ -100,13 +100,13 @@ module load_plate(
     }
 }
 
-module body(size_vec,side_thickness,bottom_thickness,gap){
-
-    translate([0,size_vec[1],-gap]){
-        rotate([180,0,0]){
-            chamfered_open_box(size_vec,bottom_thickness,side_thickness);
-        }
-    }
+module body(
+    size_vec,
+    side_thickness,bottom_thickness,
+    gap,
+    attachment_top_x,attachment_top_y
+){
+    
 }
 load_plate_size_vec = [130,130,12];
 load_plate_thickness_side = 3.2;
@@ -134,10 +134,14 @@ load_plate(
 ){            
     screw_holes(load_cell_attachment_screw_spacing,load_plate_attachment_screw_radious,load_plate_attachment_screw_hole_depth+fi);
 };
-// body(
-//     [load_plate_side_len,load_plate_side_len,load_plate_height],
-//     load_plate_thickness_side,
-//     load_plate_thickness_top,
-//     load_plate_gap
-// );
+
+base_thickness_bottom = load_plate_thickness_side;
+
+body(
+    load_plate_size_vec,
+    load_plate_thickness_side,
+    base_thickness_bottom,
+    load_plate_gap,
+    load_cell_attachment_top_x,load_cell_attachment_top_y
+);
 
