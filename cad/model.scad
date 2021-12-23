@@ -107,15 +107,27 @@ module body(
     load_cell_thickness,load_cell_length,
     attachment_top_x,attachment_top_y
 ){
-    load_plate(
-        size_vec,
-        side_thickness,bottom_thickness,
-        gap,
-        load_cell_thickness,load_cell_length,
-        attachment_top_x,attachment_top_y
-    ){
-        children(0);
-    };
+    difference(){
+        load_plate(
+            size_vec,
+            side_thickness,bottom_thickness,
+            gap,
+            load_cell_thickness,load_cell_length,
+            attachment_top_x,attachment_top_y
+        ){
+            children(0);
+        };
+
+
+        translate([
+            (size_vec[0]-load_cell_attachment_top_x)/2+attachment_top_x/2,
+            (size_vec[1] - load_cell_length)/2+attachment_top_y/2,
+            size_vec[2]+fi
+        ]){
+            rotate([0,180,0])
+            children(1);
+        }
+    }
 }
 load_plate_size_vec = [130,130,12];
 load_plate_thickness_side = 3.2;
@@ -146,6 +158,8 @@ load_cell_attachment_top_y = 7;
 
 base_thickness_bottom = load_plate_thickness_side;
 base_attachment_screw_radious = 1.5;
+base_attachment_screw_head_radious = 3;
+base_attachment_screw_head_height = 2.5;
 base_attachment_screw_hole_depth = load_plate_size_vec[2]*2;
 body(
     load_plate_size_vec,
@@ -156,5 +170,6 @@ body(
     load_cell_attachment_top_x,load_cell_attachment_top_y
 ){            
     screw_holes(load_cell_attachment_screw_spacing,base_attachment_screw_radious,base_attachment_screw_hole_depth);
+    screw_holes(load_cell_attachment_screw_spacing,base_attachment_screw_head_radious,base_attachment_screw_head_height+fi);
 };
 
