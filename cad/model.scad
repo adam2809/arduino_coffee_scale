@@ -71,7 +71,7 @@ module load_plate(
 
     load_plate_attachment_top_vec = [
         (size_vec[0]-load_cell_attachment_top_x)/2,
-        (size_vec[1] - side_thickness*2 - load_cell_length)/2,
+        (size_vec[1] - load_cell_length)/2,
         size_vec[2]-top_thickness-load_plate_attachment_thickness
     ];
 
