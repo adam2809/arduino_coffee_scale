@@ -1,5 +1,5 @@
-$fa = 1;
-$fs = 0.4;
+// $fa = 1;
+// $fs = 0.4;
 
 use <Chamfers-for-OpenSCAD/Chamfer.scad>;
 
@@ -60,11 +60,7 @@ module load_cell_attachment(size_vec){
     }
 }
 
-module load_plate(){
-    load_plate_side_len = 130;
-    load_plate_height = 12;
-    load_plate_thickness_top = 5.2;
-    load_plate_thickness_side = 3.2;
+module load_plate(size_vec,side_thickness,top_thickness){
     load_plate_gap = 3;
 
     load_cell_thickness = 6;
@@ -75,17 +71,17 @@ module load_plate(){
     load_cell_attachment_screw_spacing = 6;
     load_plate_attachment_screw_radious = 1.6;
     load_plate_attachment_screw_hole_depth = 6;
-    load_plate_attachment_thickness = load_plate_height - load_plate_thickness_top + load_plate_gap - load_cell_thickness;
+    load_plate_attachment_thickness = size_vec[2] - top_thickness + load_plate_gap - load_cell_thickness;
 
     load_plate_attachment_top_vec = [
-        (load_plate_side_len-load_cell_attachment_top_x)/2,
-        (load_plate_side_len-load_plate_thickness_side)-(load_plate_side_len - load_plate_thickness_side*2 - load_cell_length)/2,
-        load_plate_height-load_plate_thickness_top-load_plate_attachment_thickness
+        (size_vec[0]-load_cell_attachment_top_x)/2,
+        (size_vec[1]-side_thickness)-(size_vec[1] - side_thickness*2 - load_cell_length)/2,
+        size_vec[2]-top_thickness-load_plate_attachment_thickness
     ];
 
     difference(){
         union(){
-            chamfered_open_box([load_plate_side_len, load_plate_side_len, load_plate_height],load_plate_thickness_top,load_plate_thickness_side);
+            chamfered_open_box(size_vec,top_thickness,side_thickness);
             
             translate([
                 load_plate_attachment_top_vec[0]-load_plate_attachment_thickness,
@@ -123,11 +119,14 @@ load_plate_thickness_top = 5.2;
 load_plate_thickness_side = 3.2;
 load_plate_gap = 3;
 
-load_plate();
-body(
+load_plate(
     [load_plate_side_len,load_plate_side_len,load_plate_height],
-    load_plate_thickness_side,
-    load_plate_thickness_top,
-    load_plate_gap
+    3.2,5.2
 );
+// body(
+//     [load_plate_side_len,load_plate_side_len,load_plate_height],
+//     load_plate_thickness_side,
+//     load_plate_thickness_top,
+//     load_plate_gap
+// );
 
