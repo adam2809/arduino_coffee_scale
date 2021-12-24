@@ -24,6 +24,15 @@ module screw_holes(spacing,radious,depth){
     }
 }
 
+module perf_board_cutout(size_vec,offsets_vec,cutout_sizes_vec){
+    cube(size_vec);
+    for(i=[0:len(offsets_vec)-1]){
+        translate([-size_vec[0],offsets_vec[i],size_vec[2]-cutout_sizes_vec[i][1]]){
+            cube([size_vec[0]*1.5, cutout_sizes_vec[i][0], cutout_sizes_vec[i][1]]);
+        }
+    }
+}
+
 module load_cell_attachment(size_vec){
     difference(){
         cube([
@@ -97,7 +106,7 @@ module load_plate(
     }
 }
 
-module body(
+module base(
     size_vec,
     side_thickness,bottom_thickness,
     attachment_top_x,attachment_top_y,attachment_thickness,
@@ -148,16 +157,30 @@ base_attachment_screw_hole_depth = load_plate_size_vec[2]*2;
 
 attachment_thickness = (load_plate_size_vec[2]*2+load_plate_gap-(load_plate_thickness_top+base_thickness_bottom+load_cell_thickness))/2;
 
-load_plate(
-    load_plate_size_vec,
-    load_plate_thickness_side,load_plate_thickness_top,
-    load_cell_attachment_top_x,load_cell_attachment_top_y,attachment_thickness,
-    load_cell_length
-){            
-    screw_holes(load_cell_attachment_screw_spacing,load_plate_attachment_screw_radious,load_plate_attachment_screw_hole_depth+fi);
-};
+// load_plate(
+//     load_plate_size_vec,
+//     load_plate_thickness_side,load_plate_thickness_top,
+//     load_cell_attachment_top_x,load_cell_attachment_top_y,attachment_thickness,
+//     load_cell_length
+// ){            
+//     screw_holes(load_cell_attachment_screw_spacing,load_plate_attachment_screw_radious,load_plate_attachment_screw_hole_depth+fi);
+// };
+charger_usb_hole_offset_on_perf_board = 11.4;
+nano_usb_hole_offset_on_perf_board = 30.4;
 
-// body(
+perf_board_size_vec = [50,70,13];
+perf_board_wall_thickness = 0.4;
+perf_board_offset_inside_base = 30;
+perf_board_attachment_rails_height = 1.7;
+perf_board_attachment_rails_width = 3.5;
+
+perf_board_cutout(
+    perf_board_size_vec,
+    [nano_usb_hole_offset_on_perf_board,charger_usb_hole_offset_on_perf_board],
+    [[8.6,6],[9.6,4.6]]
+);
+
+// base(
 //     load_plate_size_vec,
 //     load_plate_thickness_side,base_thickness_bottom,
 //     load_cell_attachment_top_x,load_cell_attachment_top_y,attachment_thickness,
