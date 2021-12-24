@@ -110,7 +110,8 @@ module base(
     size_vec,
     side_thickness,bottom_thickness,
     attachment_top_x,attachment_top_y,attachment_thickness,
-    load_cell_length
+    load_cell_length,
+    perf_board_wall_thickness,perf_board_offset_inside_base,perf_z_size
 ){
     difference(){
         load_plate(
@@ -131,6 +132,13 @@ module base(
             rotate([0,180,0])
             children(1);
         }
+
+
+        translate([perf_board_wall_thickness,size_vec[1]-side_thickness-perf_board_offset_inside_base,perf_z_size-fi]){
+            rotate([180,0,0]){
+                children(2);
+            }
+        }
     }
 }
 load_plate_size_vec = [130,130,12];
@@ -149,13 +157,14 @@ load_cell_length = 47;
 load_cell_attachment_top_x = 12;
 load_cell_attachment_top_y = 7;
 
+base_size_vec = [load_plate_size_vec[0],load_plate_size_vec[1],16.6];
 base_thickness_bottom = load_plate_thickness_side;
 base_attachment_screw_radious = 1.5;
 base_attachment_screw_head_radious = 3;
 base_attachment_screw_head_height = 2.5;
-base_attachment_screw_hole_depth = load_plate_size_vec[2]*2;
+base_attachment_screw_hole_depth = base_size_vec[2]*2;
 
-attachment_thickness = (load_plate_size_vec[2]*2+load_plate_gap-(load_plate_thickness_top+base_thickness_bottom+load_cell_thickness))/2;
+attachment_thickness = (load_plate_size_vec[2]+base_size_vec[2]+load_plate_gap-(load_plate_thickness_top+base_thickness_bottom+load_cell_thickness))/2;
 
 // load_plate(
 //     load_plate_size_vec,
@@ -168,25 +177,26 @@ attachment_thickness = (load_plate_size_vec[2]*2+load_plate_gap-(load_plate_thic
 charger_usb_hole_offset_on_perf_board = 11.4;
 nano_usb_hole_offset_on_perf_board = 30.4;
 
-perf_board_size_vec = [50,70,13];
-perf_board_wall_thickness = 0.4;
+perf_board_size_vec = [50,70,13+fi];
 perf_board_offset_inside_base = 30;
 perf_board_attachment_rails_height = 1.7;
 perf_board_attachment_rails_width = 3.5;
+perf_board_wall_thickness = 0.4;
 
-perf_board_cutout(
-    perf_board_size_vec,
-    [nano_usb_hole_offset_on_perf_board,charger_usb_hole_offset_on_perf_board],
-    [[8.6,6],[9.6,4.6]]
-);
+base(
+    base_size_vec,
+    load_plate_thickness_side,base_thickness_bottom,
+    load_cell_attachment_top_x,load_cell_attachment_top_y,attachment_thickness,
+    load_cell_length,
+    perf_board_wall_thickness,perf_board_offset_inside_base,perf_board_size_vec[2]
+){            
+    screw_holes(load_cell_attachment_screw_spacing,base_attachment_screw_radious,base_attachment_screw_hole_depth);
+    screw_holes(load_cell_attachment_screw_spacing,base_attachment_screw_head_radious,base_attachment_screw_head_height+fi);
 
-// base(
-//     load_plate_size_vec,
-//     load_plate_thickness_side,base_thickness_bottom,
-//     load_cell_attachment_top_x,load_cell_attachment_top_y,attachment_thickness,
-//     load_cell_length
-// ){            
-//     screw_holes(load_cell_attachment_screw_spacing,base_attachment_screw_radious,base_attachment_screw_hole_depth);
-//     screw_holes(load_cell_attachment_screw_spacing,base_attachment_screw_head_radious,base_attachment_screw_head_height+fi);
-// };
+    perf_board_cutout(
+        perf_board_size_vec,
+        [nano_usb_hole_offset_on_perf_board,charger_usb_hole_offset_on_perf_board],
+        [[8.6,6],[9.6,4.6]]
+    );
+};
 
