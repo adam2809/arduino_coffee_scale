@@ -154,6 +154,24 @@ module base(
                 children(2);
             }
         }
+
+
+        load_plate_attachment_top_vec = [
+            (size_vec[0]-load_cell_attachment_top_x)/2,
+            (size_vec[1] - load_cell_length)/2,
+            size_vec[2]-bottom_thickness-attachment_thickness
+        ];
+        translate([
+            load_plate_attachment_top_vec[0]- attachment_thickness,
+            load_plate_attachment_top_vec[1]-(attachment_thickness+fi),
+            size_vec[2]-bottom_thickness- attachment_thickness
+        ]){
+            cube([
+                perf_board_size_vec[0]-(size_vec[0]/2-(attachment_top_x/2+attachment_thickness)-side_thickness)+0.5,
+                attachment_thickness*4,
+                attachment_thickness
+            ]);
+        }
     }
     translate([
         side_thickness-fi,
