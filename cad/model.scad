@@ -106,12 +106,22 @@ module load_plate(
     }
 }
 
+module perf_board_rails(perf_board_size_vec,rails_size_vec){
+    rail_size_vec = [perf_board_size_vec[0],rails_size_vec[0],rails_size_vec[1]];
+    translate([0,0,-rails_size_vec[1]]){
+        cube(rail_size_vec);
+        translate([0,perf_board_size_vec[1],0]){
+            cube(rail_size_vec);
+        }
+    }
+}
+
 module base(
     size_vec,
     side_thickness,bottom_thickness,
     attachment_top_x,attachment_top_y,attachment_thickness,
     load_cell_length,
-    perf_board_wall_thickness,perf_board_offset_inside_base,perf_z_size
+    perf_board_wall_thickness,perf_board_offset_inside_base,perf_board_size_vec
 ){
     difference(){
         load_plate(
@@ -134,11 +144,18 @@ module base(
         }
 
 
-        translate([perf_board_wall_thickness,size_vec[1]-side_thickness-perf_board_offset_inside_base,perf_z_size-fi]){
+        translate([perf_board_wall_thickness,size_vec[1]-side_thickness-perf_board_offset_inside_base,perf_board_size_vec[2]-fi]){
             rotate([180,0,0]){
                 children(2);
             }
         }
+    }
+    translate([
+        side_thickness-fi,
+        size_vec[1]-side_thickness-perf_board_offset_inside_base-perf_board_size_vec[1],
+        size_vec[2]-bottom_thickness+fi
+    ]){
+        children(3);
     }
 }
 load_plate_size_vec = [130,130,12];
@@ -182,13 +199,12 @@ perf_board_offset_inside_base = 30;
 perf_board_attachment_rails_height = 1.7;
 perf_board_attachment_rails_width = 3.5;
 perf_board_wall_thickness = 0.4;
-
 base(
     base_size_vec,
     load_plate_thickness_side,base_thickness_bottom,
     load_cell_attachment_top_x,load_cell_attachment_top_y,attachment_thickness,
     load_cell_length,
-    perf_board_wall_thickness,perf_board_offset_inside_base,perf_board_size_vec[2]
+    perf_board_wall_thickness,perf_board_offset_inside_base,perf_board_size_vec
 ){            
     screw_holes(load_cell_attachment_screw_spacing,base_attachment_screw_radious,base_attachment_screw_hole_depth);
     screw_holes(load_cell_attachment_screw_spacing,base_attachment_screw_head_radious,base_attachment_screw_head_height+fi);
@@ -198,5 +214,6 @@ base(
         [nano_usb_hole_offset_on_perf_board,charger_usb_hole_offset_on_perf_board],
         [[8.6,6],[9.6,4.6]]
     );
+    perf_board_rails(perf_board_size_vec,[3.5,1.7]);
 };
 
