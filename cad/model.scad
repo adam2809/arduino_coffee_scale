@@ -116,6 +116,22 @@ module perf_board_rails(perf_board_size_vec,rails_size_vec){
     }
 }
 
+module display_cover_shape(base_size_vec,length,slant_offset,chamfer_size){
+    linear_extrude(height=30){
+        union(){
+            polygon([
+                [0,0],
+                [0,base_size_vec[2]],
+                [length,base_size_vec[2]-slant_offset],
+                [length,0]
+            ]);
+            translate([-(chamfer_size),0]){
+                square(chamfer_size+fi);
+            }
+        }
+    }
+}
+
 module base(
     size_vec,
     side_thickness,bottom_thickness,
@@ -205,15 +221,17 @@ base_attachment_screw_head_height = 2.5;
 base_attachment_screw_hole_depth = base_size_vec[2]*2;
 
 attachment_thickness = (load_plate_size_vec[2]+base_size_vec[2]+load_plate_gap-(load_plate_thickness_top+base_thickness_bottom+load_cell_thickness))/2;
-
-// load_plate(
-//     load_plate_size_vec,
-//     load_plate_thickness_side,load_plate_thickness_top,
-//     load_cell_attachment_top_x,load_cell_attachment_top_y,attachment_thickness,
-//     load_cell_length
-// ){            
-//     screw_holes(load_cell_attachment_screw_spacing,load_plate_attachment_screw_radious,load_plate_attachment_screw_hole_depth+fi);
-// };
+// translate([load_plate_size_vec[0],0,-load_plate_gap])
+//     rotate([0,180,0]){
+//         load_plate(
+//             load_plate_size_vec,
+//             load_plate_thickness_side,load_plate_thickness_top,
+//             load_cell_attachment_top_x,load_cell_attachment_top_y,attachment_thickness,
+//             load_cell_length
+//         ){            
+//             screw_holes(load_cell_attachment_screw_spacing,load_plate_attachment_screw_radious,load_plate_attachment_screw_hole_depth+fi);
+//         };
+//     }
 charger_usb_hole_offset_on_perf_board = 11.4;
 nano_usb_hole_offset_on_perf_board = 30.4;
 
@@ -247,4 +265,17 @@ base(
     );
     perf_board_rails(perf_board_size_vec,[3.5,1.7]);
 };
+display_cover_width = 30;
+display_cover_length = 20;
+display_cover_slant_offset = 8.3;
 
+translate([display_cover_width,0,0]){
+    rotate([-90,0,90]){
+        display_cover_shape(
+            base_size_vec,
+            display_cover_length,
+            display_cover_slant_offset,
+            chamfer_size
+        );
+    }
+}
