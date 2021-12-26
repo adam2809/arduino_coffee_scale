@@ -139,12 +139,17 @@ module base(
             (size_vec[1] - load_cell_length)/2+attachment_top_y/2,
             size_vec[2]+fi
         ]){
-            rotate([0,180,0])
-            children(1);
+            rotate([0,180,0]){
+                children(1);
+            }
         }
 
 
-        translate([perf_board_wall_thickness,size_vec[1]-side_thickness-perf_board_offset_inside_base,perf_board_size_vec[2]-fi]){
+        translate([
+            perf_board_wall_thickness,
+            size_vec[1]-side_thickness-perf_board_offset_inside_base,
+            perf_board_size_vec[2]-fi]
+        ){
             rotate([180,0,0]){
                 children(2);
             }
@@ -206,8 +211,16 @@ base(
     load_cell_length,
     perf_board_wall_thickness,perf_board_offset_inside_base,perf_board_size_vec
 ){            
-    screw_holes(load_cell_attachment_screw_spacing,base_attachment_screw_radious,base_attachment_screw_hole_depth);
-    screw_holes(load_cell_attachment_screw_spacing,base_attachment_screw_head_radious,base_attachment_screw_head_height+fi);
+    screw_holes(
+        load_cell_attachment_screw_spacing,
+        base_attachment_screw_radious,
+        base_attachment_screw_hole_depth
+    );
+    screw_holes(
+        load_cell_attachment_screw_spacing,
+        base_attachment_screw_head_radious+fi,
+        base_attachment_screw_head_height+fi
+    );
 
     perf_board_cutout(
         perf_board_size_vec,
