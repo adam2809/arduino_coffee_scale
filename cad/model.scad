@@ -110,7 +110,8 @@ module base(
     side_thickness,bottom_thickness,
     attachment_top_x,attachment_top_y,attachment_thickness,
     load_cell_length,
-    perf_board_wall_thickness,perf_board_offset_inside_base,perf_board_size_vec
+    perf_board_wall_thickness,perf_board_offset_inside_base,perf_board_size_vec,
+    display_cover_width
 ){
     difference(){
         load_plate(
@@ -169,6 +170,8 @@ module base(
     ]){
         children(3);
     }
+    translate([size_vec[0]/2 - display_cover_width/2,size_vec[1]-fi,size_vec[2]])
+    children(4);
 }
 
 
@@ -203,7 +206,7 @@ module display_cover_body(base_size_vec,length,width,wall_thickness,slant_offset
 
 
 
-load_plate_size_vec = [130,130,12];
+load_plate_size_vec = [125,125,12];
 load_plate_thickness_side = 3.2;
 load_plate_thickness_top = 5.2;
 load_plate_gap = 3;
@@ -227,7 +230,7 @@ base_attachment_screw_head_height = 2.5;
 base_attachment_screw_hole_depth = base_size_vec[2]*2;
 
 attachment_thickness = (load_plate_size_vec[2]+base_size_vec[2]+load_plate_gap-(load_plate_thickness_top+base_thickness_bottom+load_cell_thickness))/2;
-// translate([load_plate_size_vec[0],0,-load_plate_gap])
+// translate([load_plate_size_vec[0],0,-load_plate_gap]){
 //     rotate([0,180,0]){
 //         load_plate(
 //             load_plate_size_vec,
@@ -238,6 +241,7 @@ attachment_thickness = (load_plate_size_vec[2]+base_size_vec[2]+load_plate_gap-(
 //             screw_holes(load_cell_attachment_screw_spacing,load_plate_attachment_screw_radious,load_plate_attachment_screw_hole_depth+fi);
 //         };
 //     }
+// }
 charger_usb_hole_offset_on_perf_board = 11.4;
 nano_usb_hole_offset_on_perf_board = 30.4;
 
@@ -246,45 +250,46 @@ perf_board_offset_inside_base = 30;
 perf_board_attachment_rails_height = 1.7;
 perf_board_attachment_rails_width = 3.5;
 perf_board_wall_thickness = 0.4;
-// base(
-//     base_size_vec,
-//     load_plate_thickness_side,base_thickness_bottom,
-//     load_cell_attachment_top_x,load_cell_attachment_top_y,attachment_thickness,
-//     load_cell_length,
-//     perf_board_wall_thickness,perf_board_offset_inside_base,perf_board_size_vec
-// ){            
-//     screw_holes(
-//         load_cell_attachment_screw_spacing,
-//         base_attachment_screw_radious,
-//         base_attachment_screw_hole_depth
-//     );
-//     screw_holes(
-//         load_cell_attachment_screw_spacing,
-//         base_attachment_screw_head_radious+fi,
-//         base_attachment_screw_head_height+fi
-//     );
+base(
+    base_size_vec,
+    load_plate_thickness_side,base_thickness_bottom,
+    load_cell_attachment_top_x,load_cell_attachment_top_y,attachment_thickness,
+    load_cell_length,
+    perf_board_wall_thickness,perf_board_offset_inside_base,perf_board_size_vec,
+    display_cover_width
+){            
+    screw_holes(
+        load_cell_attachment_screw_spacing,
+        base_attachment_screw_radious,
+        base_attachment_screw_hole_depth
+    );
+    screw_holes(
+        load_cell_attachment_screw_spacing,
+        base_attachment_screw_head_radious+fi,
+        base_attachment_screw_head_height+fi
+    );
 
-//     perf_board_cutout(
-//         perf_board_size_vec,
-//         [nano_usb_hole_offset_on_perf_board,charger_usb_hole_offset_on_perf_board],
-//         [[8.6,6],[9.6,4.6]]
-//     );
-//     perf_board_rails(perf_board_size_vec,[3.5,1.7]);
-// };
+    perf_board_cutout(
+        perf_board_size_vec,
+        [nano_usb_hole_offset_on_perf_board,charger_usb_hole_offset_on_perf_board],
+        [[8.6,6],[9.6,4.6]]
+    );
+    perf_board_rails(perf_board_size_vec,[3.5,1.7]);
+
+    translate([display_cover_width,0,0]){
+        rotate([-90,0,90]){
+            display_cover_body(
+                base_size_vec,
+                display_cover_length+fi,
+                display_cover_width,
+                display_cover_wall_thickness,
+                display_cover_slant_offset,
+                chamfer_size
+            );
+        }
+    }
+};
 display_cover_width = 30;
 display_cover_length = 20;
 display_cover_slant_offset = 8.3;
 display_cover_wall_thickness = 2.8;
-
-// translate([display_cover_width,0,0]){
-//     rotate([-90,0,90]){
-        display_cover_body(
-            base_size_vec,
-            display_cover_length,
-            display_cover_width,
-            display_cover_wall_thickness,
-            display_cover_slant_offset,
-            chamfer_size
-        );
-//     }
-// }
