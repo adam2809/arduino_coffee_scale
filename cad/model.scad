@@ -7,6 +7,44 @@ fi=0.01;
 chamfer_size = 1;
 
 
+
+module load_plate(
+    size_vec,
+    side_thickness,top_thickness,
+    load_cell_attachment_top_x,load_cell_attachment_top_y,attachment_thickness,
+    load_cell_length
+){
+    load_plate_attachment_top_vec = [
+        (size_vec[0]-load_cell_attachment_top_x)/2,
+        (size_vec[1] - load_cell_length)/2,
+        size_vec[2]-top_thickness-attachment_thickness
+    ];
+
+    difference(){
+        union(){
+            chamfered_open_box(size_vec,top_thickness,side_thickness);
+            
+            translate([
+                load_plate_attachment_top_vec[0]-attachment_thickness,
+                load_plate_attachment_top_vec[1]+attachment_thickness+load_cell_attachment_top_y,
+                load_plate_attachment_top_vec[2]+attachment_thickness+fi
+            ]){
+                rotate([180,0,0]){
+                    load_cell_attachment([load_cell_attachment_top_x,load_cell_attachment_top_y,attachment_thickness+fi]);
+                }
+            }
+        }
+        // screw holes
+        translate([
+            load_plate_attachment_top_vec[0]+load_cell_attachment_top_x/2,
+            load_plate_attachment_top_vec[1]+load_cell_attachment_top_y/2,
+            load_plate_attachment_top_vec[2]-fi
+        ]){
+            children(0);
+        }
+    }
+}
+
 module chamfered_open_box(size_vec,top_thickness,side_thickness){
     difference(){
         chamferCube(size_vec, [[0, 0, 1, 1], [0, 1, 1, 0], [1, 1, 1, 1]], chamfer_size);
@@ -70,42 +108,7 @@ module load_cell_attachment(size_vec){
     }
 }
 
-module load_plate(
-    size_vec,
-    side_thickness,top_thickness,
-    load_cell_attachment_top_x,load_cell_attachment_top_y,attachment_thickness,
-    load_cell_length
-){
-    load_plate_attachment_top_vec = [
-        (size_vec[0]-load_cell_attachment_top_x)/2,
-        (size_vec[1] - load_cell_length)/2,
-        size_vec[2]-top_thickness-attachment_thickness
-    ];
 
-    difference(){
-        union(){
-            chamfered_open_box(size_vec,top_thickness,side_thickness);
-            
-            translate([
-                load_plate_attachment_top_vec[0]-attachment_thickness,
-                load_plate_attachment_top_vec[1]+attachment_thickness+load_cell_attachment_top_y,
-                load_plate_attachment_top_vec[2]+attachment_thickness+fi
-            ]){
-                rotate([180,0,0]){
-                    load_cell_attachment([load_cell_attachment_top_x,load_cell_attachment_top_y,attachment_thickness+fi]);
-                }
-            }
-        }
-        // screw holes
-        translate([
-            load_plate_attachment_top_vec[0]+load_cell_attachment_top_x/2,
-            load_plate_attachment_top_vec[1]+load_cell_attachment_top_y/2,
-            load_plate_attachment_top_vec[2]-fi
-        ]){
-            children(0);
-        }
-    }
-}
 module base(
     size_vec,
     side_thickness,bottom_thickness,
@@ -185,6 +188,21 @@ module perf_board_rails(perf_board_size_vec,rails_size_vec,wall_thickness){
             cube(rail_size_vec);
         }
     }
+}
+
+module display_cover(base_size_vec,length,width,wall_thickness,slant_offset,chamfer_size,top_thickness){
+    difference(){
+        linear_extrude(height=width-wall_thickness*2){
+            polygon([
+                [0,0],
+                [length,-slant_offset],
+                [length,-(top_thickness+slant_offset)],
+                [0,-top_thickness]
+            ]);
+        }
+        
+    }
+
 }
 
 module display_cover_body(base_size_vec,length,width,wall_thickness,slant_offset,chamfer_size){
@@ -273,43 +291,57 @@ display_cover_length = 20;
 display_cover_slant_offset = 8.3;
 display_cover_wall_thickness = 2;
 
-base(
-    base_size_vec,
-    load_plate_thickness_side,base_thickness_bottom,
-    load_cell_attachment_top_x,load_cell_attachment_top_y,attachment_thickness,
-    load_cell_length,
-    perf_board_wall_thickness,perf_board_offset_inside_base,perf_board_size_vec,
-    display_cover_width
-){            
-    screw_holes(
-        load_cell_attachment_screw_spacing,
-        base_attachment_screw_radious,
-        base_attachment_screw_hole_depth
-    );
-    screw_holes(
-        load_cell_attachment_screw_spacing,
-        base_attachment_screw_head_radious+fi,
-        base_attachment_screw_head_height+fi
-    );
+display_cover_top_thickness = 2;
 
-    perf_board_cutout(
-        perf_board_size_vec,
-        [nano_usb_hole_offset_on_perf_board,charger_usb_hole_offset_on_perf_board],
-        [[8.6,6],[9.6,4.6]]
-    );
-    perf_board_rails(perf_board_size_vec,[3.5,1.7]);
+// base(
+//     base_size_vec,
+//     load_plate_thickness_side,base_thickness_bottom,
+//     load_cell_attachment_top_x,load_cell_attachment_top_y,attachment_thickness,
+//     load_cell_length,
+//     perf_board_wall_thickness,perf_board_offset_inside_base,perf_board_size_vec,
+//     display_cover_width
+// ){            
+//     screw_holes(
+//         load_cell_attachment_screw_spacing,
+//         base_attachment_screw_radious,
+//         base_attachment_screw_hole_depth
+//     );
+//     screw_holes(
+//         load_cell_attachment_screw_spacing,
+//         base_attachment_screw_head_radious+fi,
+//         base_attachment_screw_head_height+fi
+//     );
 
-    translate([display_cover_width,0,0]){
-        rotate([-90,0,90]){
-            display_cover_body(
+//     perf_board_cutout(
+//         perf_board_size_vec,
+//         [nano_usb_hole_offset_on_perf_board,charger_usb_hole_offset_on_perf_board],
+//         [[8.6,6],[9.6,4.6]]
+//     );
+//     perf_board_rails(perf_board_size_vec,[3.5,1.7]);
+
+//     translate([display_cover_width,0,0]){
+//         rotate([-90,0,90]){
+//             display_cover_body(
+//                 base_size_vec,
+//                 display_cover_length+fi,
+//                 display_cover_width,
+//                 display_cover_wall_thickness,
+//                 display_cover_slant_offset,
+//                 chamfer_size
+//             );
+//         }
+//     }
+// };
+
+// cube([display_cover_width-display_cover_wall_thickness*2,display_cover_length-display_cover_wall_thickness*2,1]);
+
+display_cover(
                 base_size_vec,
                 display_cover_length+fi,
                 display_cover_width,
                 display_cover_wall_thickness,
                 display_cover_slant_offset,
-                chamfer_size
-            );
-        }
-    }
-};
+                chamfer_size,
+                display_cover_top_thickness
+);
 
