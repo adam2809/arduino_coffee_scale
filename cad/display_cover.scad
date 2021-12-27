@@ -64,7 +64,7 @@ module display_cover_top(
             top_length = pitagora(length,slant_offset)-pitagora(base_size_vec[2]-y,wall_thickness);
             difference(){
                 cube([width,length,top_thickness]);
-                translate([display_cutout_offset_on_top,(top_length-display_pcb_height)/2,-display_wall_thickness]){
+                translate([display_cutout_offset_on_top,(top_length-display_pcb_height)/2,-top_thickness+display_wall_thickness]){
                     children(0);
 
                 }
