@@ -2,11 +2,11 @@
 // $fs = 0.4;
 
 use <Chamfers-for-OpenSCAD/Chamfer.scad>;
+use <display_cover.scad>;
+use <util.scad>
 
 fi=0.01;
 chamfer_size = 1;
-
-
 
 module load_plate(
     size_vec,
@@ -50,24 +50,6 @@ module chamfered_open_box(size_vec,top_thickness,side_thickness){
         chamferCube(size_vec, [[0, 0, 1, 1], [0, 1, 1, 0], [1, 1, 1, 1]], chamfer_size);
         translate([side_thickness,side_thickness,-fi]){
             cube([size_vec[0]-side_thickness*2,size_vec[1]-side_thickness*2,size_vec[2]-top_thickness+fi]);
-        }
-    }
-}
-
-module screw_holes(spacing,radious,depth){
-    translate([-spacing/2,0]){
-        cylinder(r=radious, h=depth);
-    }
-    translate([spacing/2,0]) {
-        cylinder(r=radious, h=depth);
-    }
-}
-
-module perf_board_cutout(size_vec,offsets_vec,cutout_sizes_vec,offset_from_top=0){
-    cube(size_vec);
-    for(i=[0:len(offsets_vec)-1]){
-        translate([-size_vec[0],offsets_vec[i],size_vec[2]-cutout_sizes_vec[i][1]-offset_from_top]){
-            cube([size_vec[0]*1.5, cutout_sizes_vec[i][0], cutout_sizes_vec[i][1]]);
         }
     }
 }
@@ -190,109 +172,6 @@ module perf_board_rails(perf_board_size_vec,rails_size_vec,wall_thickness){
     }
 }
 
-module display_cover(
-    base_size_vec,
-    length,width,wall_thickness,
-    slant_offset,chamfer_size,top_thickness,
-    display_pcb_height,display_wall_thickness,display_cutout_offset_on_top
-){
-    
-    translate([display_cover_width,0,0]){
-        rotate([-90,0,90]){
-            display_cover_body(
-                base_size_vec,
-                display_cover_length+fi,
-                display_cover_width,
-                display_cover_wall_thickness,
-                display_cover_slant_offset,
-                chamfer_size
-            );
-        }
-    }
-
-
-    translate([display_cover_wall_thickness,0,-base_size_vec[2]]){
-        display_cover_top(
-            base_size_vec,
-            display_cover_length+fi,
-            display_cover_width,
-            display_cover_wall_thickness,
-            display_cover_slant_offset,
-            display_cover_top_thickness,
-            display_pcb_height,display_wall_thickness,display_cutout_offset_on_top
-        ){
-            translate([display_pcb_width,0,display_cover_top_thickness]){
-                rotate([0,90,90]){
-                    perf_board_cutout(
-                        [display_cover_top_thickness,display_pcb_width,display_pcb_height],
-                        [display_offset_on_pcb],
-                        [[display_width,display_height]],
-                        (display_pcb_height-display_height)/2
-                    );
-                }
-            }
-        };
-    }
-}
-
-pitagora = function (x,y) sqrt(pow(x,2) + pow(y,2));
-module display_cover_top(
-    base_size_vec,
-    length,width,wall_thickness,
-    slant_offset,top_thickness,
-    display_pcb_height,display_wall_thickness,display_cutout_offset_on_top
-
-){
-    intersection(){
-        rotate([atan((slant_offset)/length),0,0]){
-            y = -slant_offset/length*wall_thickness+base_size_vec[2];
-            top_length = pitagora(length,slant_offset)-pitagora(base_size_vec[2]-y,wall_thickness);
-            difference(){
-                cube([width,length,top_thickness]);
-                translate([display_cutout_offset_on_top,(top_length-display_pcb_height)/2,-display_wall_thickness]){
-                    children(0);
-
-                }
-            }
-        }
-        translate([0,0,-fi])
-        cube([width-wall_thickness*2,length-wall_thickness,length]);
-    }
-}
-
-
-module display_cover_body(base_size_vec,length,width,wall_thickness,slant_offset,chamfer_size){
-    difference(){
-        linear_extrude(height=width){
-            polygon([
-                [0,0],
-                [0,base_size_vec[2]],
-                [length,base_size_vec[2]-slant_offset],
-                [display_cover_length,chamfer_size],
-                [display_cover_length-chamfer_size,0],
-                [length,0]
-            ]);
-            translate([-(chamfer_size),0]){
-                square(chamfer_size+fi);
-            }
-        }
-        translate([-fi,wall_thickness,wall_thickness]){
-            cube([length-wall_thickness+fi,base_size_vec[2]+fi,width-wall_thickness*2]);
-        }
-        translate([length*0.5,0,0]){
-            translate([0,0,width]){
-                rotate([45,0,0]){
-                    cube([length*2,chamfer_size*sqrt(2),chamfer_size*sqrt(2)],center=true);
-                }
-            }
-            rotate([45,0,0]){
-                cube([length*2,chamfer_size*sqrt(2),chamfer_size*sqrt(2)],center=true);
-            }
-        }
-    }
-}
-
-
 
 load_plate_size_vec = [125,125,12];
 load_plate_thickness_side = 2.4;
@@ -384,7 +263,10 @@ base(
         display_cover_slant_offset,
         chamfer_size,
         display_cover_top_thickness,
-        display_pcb_height,display_wall_thickness,display_cutout_offset_on_top
+        display_pcb_height,display_pcb_width,
+        display_height,display_width,
+        display_wall_thickness,display_cutout_offset_on_top,
+        display_offset_on_pcb
     );
 };
 
