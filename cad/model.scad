@@ -148,6 +148,10 @@ module base(
                 attachment_thickness
             ]);
         }
+
+
+        translate([size_vec[0]/2,size_vec[1]-side_thickness/2-fi,(size_vec[2]-bottom_thickness)/2])
+        children(5);
     }
     translate([
         side_thickness-fi,
@@ -228,6 +232,9 @@ display_cover_wall_thickness = 2;
 
 display_cover_top_thickness = 2;
 
+display_cover_cable_clearence_height = 2;
+display_cover_cable_clearence_width = 10;
+
 base(
     base_size_vec,
     load_plate_thickness_side,base_thickness_bottom,
@@ -267,6 +274,7 @@ base(
         display_wall_thickness,display_cutout_offset_on_top,
         display_offset_on_pcb
     );
+    cube([display_cover_cable_clearence_width,load_plate_thickness_side+fi*2,display_cover_cable_clearence_height],center= true);
 };
 
 display_offset_on_pcb = 6.5;
