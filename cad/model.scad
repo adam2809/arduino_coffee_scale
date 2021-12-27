@@ -6,6 +6,7 @@ use <Chamfers-for-OpenSCAD/Chamfer.scad>;
 fi=0.01;
 chamfer_size = 1;
 
+
 module chamfered_open_box(size_vec,top_thickness,side_thickness){
     difference(){
         chamferCube(size_vec, [[0, 0, 1, 1], [0, 1, 1, 0], [1, 1, 1, 1]], chamfer_size);
@@ -203,6 +204,16 @@ module display_cover_body(base_size_vec,length,width,wall_thickness,slant_offset
         }
         translate([-fi,wall_thickness,wall_thickness]){
             cube([length-wall_thickness+fi,base_size_vec[2]+fi,width-wall_thickness*2]);
+        }
+        translate([length*0.5,0,0]){
+            translate([0,0,width]){
+                rotate([45,0,0]){
+                    cube([length*2,chamfer_size*sqrt(2),chamfer_size*sqrt(2)],center=true);
+                }
+            }
+            rotate([45,0,0]){
+                cube([length*2,chamfer_size*sqrt(2),chamfer_size*sqrt(2)],center=true);
+            }
         }
     }
 }
