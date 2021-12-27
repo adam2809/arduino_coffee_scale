@@ -193,6 +193,8 @@ module display_cover_body(base_size_vec,length,width,wall_thickness,slant_offset
                 [0,0],
                 [0,base_size_vec[2]],
                 [length,base_size_vec[2]-slant_offset],
+                [display_cover_length,chamfer_size],
+                [display_cover_length-chamfer_size,0],
                 [length,0]
             ]);
             translate([-(chamfer_size),0]){
