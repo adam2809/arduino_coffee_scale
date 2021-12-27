@@ -198,11 +198,10 @@ module display_cover(
     display_pcb_height,display_wall_thickness,display_cutout_offset_on_top
 
 ){
-    echo(atan((base_size_vec[2]-slant_offset)/slant_offset));
     intersection(){
         rotate([atan((slant_offset)/length),0,0]){
             y = -slant_offset/length*wall_thickness+base_size_vec[2];
-            top_length = pitagora(length,slant_offset)-2*pitagora(base_size_vec[2]-y,wall_thickness);
+            top_length = pitagora(length,slant_offset)-pitagora(base_size_vec[2]-y,wall_thickness);
             difference(){
                 cube([width,length,top_thickness]);
                 translate([display_cutout_offset_on_top,(top_length-display_pcb_height)/2,-display_wall_thickness]){
@@ -212,7 +211,7 @@ module display_cover(
             }
         }
         translate([0,0,-fi])
-        cube([width-wall_thickness*2,length-wall_thickness*2,length]);
+        cube([width-wall_thickness*2,length-wall_thickness,length]);
     }
 }
 
@@ -331,18 +330,18 @@ display_cover_top_thickness = 2;
     // );
 //     perf_board_rails(perf_board_size_vec,[3.5,1.7]);
 
-//     translate([display_cover_width,0,0]){
-//         rotate([-90,0,90]){
-            // display_cover_body(
-            //     base_size_vec,
-            //     display_cover_length+fi,
-            //     display_cover_width,
-            //     display_cover_wall_thickness,
-            //     display_cover_slant_offset,
-            //     chamfer_size
-            // );
-//         }
-//     }
+    translate([display_cover_width,0,0]){
+        rotate([-90,0,90]){
+            display_cover_body(
+                base_size_vec,
+                display_cover_length+fi,
+                display_cover_width,
+                display_cover_wall_thickness,
+                display_cover_slant_offset,
+                chamfer_size
+            );
+        }
+    }
 // };
 
 // cube([display_cover_width-display_cover_wall_thickness*2,display_cover_length-display_cover_wall_thickness*2,1]);
@@ -353,26 +352,26 @@ display_width = 21;
 display_height = 11;
 display_wall_thickness = 0.2;
 display_cutout_offset_on_top = 2;
-
-display_cover(
-    base_size_vec,
-    display_cover_length+fi,
-    display_cover_width,
-    display_cover_wall_thickness,
-    display_cover_slant_offset,
-    chamfer_size,
-    display_cover_top_thickness,
-    display_pcb_height,display_wall_thickness,display_cutout_offset_on_top
-){
-    translate([display_pcb_width,0,display_cover_top_thickness]){
-        rotate([0,90,90]){
-            perf_board_cutout(
-                [display_cover_top_thickness,display_pcb_width,display_pcb_height],
-                [display_offset_on_pcb],
-                [[display_width,display_height]],
-                (display_pcb_height-display_height)/2
-            );
+translate([display_cover_wall_thickness,0,-base_size_vec[2]]){
+    display_cover(
+        base_size_vec,
+        display_cover_length+fi,
+        display_cover_width,
+        display_cover_wall_thickness,
+        display_cover_slant_offset,
+        chamfer_size,
+        display_cover_top_thickness,
+        display_pcb_height,display_wall_thickness,display_cutout_offset_on_top
+    ){
+        translate([display_pcb_width,0,display_cover_top_thickness]){
+            rotate([0,90,90]){
+                perf_board_cutout(
+                    [display_cover_top_thickness,display_pcb_width,display_pcb_height],
+                    [display_offset_on_pcb],
+                    [[display_width,display_height]],
+                    (display_pcb_height-display_height)/2
+                );
+            }
         }
-    }
-};
-
+    };
+}
