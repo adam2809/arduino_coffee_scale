@@ -190,11 +190,56 @@ module perf_board_rails(perf_board_size_vec,rails_size_vec,wall_thickness){
     }
 }
 
-pitagora = function (x,y) sqrt(pow(x,2) + pow(y,2));
 module display_cover(
     base_size_vec,
     length,width,wall_thickness,
     slant_offset,chamfer_size,top_thickness,
+    display_pcb_height,display_wall_thickness,display_cutout_offset_on_top
+){
+    
+    translate([display_cover_width,0,0]){
+        rotate([-90,0,90]){
+            display_cover_body(
+                base_size_vec,
+                display_cover_length+fi,
+                display_cover_width,
+                display_cover_wall_thickness,
+                display_cover_slant_offset,
+                chamfer_size
+            );
+        }
+    }
+
+
+    translate([display_cover_wall_thickness,0,-base_size_vec[2]]){
+        display_cover_top(
+            base_size_vec,
+            display_cover_length+fi,
+            display_cover_width,
+            display_cover_wall_thickness,
+            display_cover_slant_offset,
+            display_cover_top_thickness,
+            display_pcb_height,display_wall_thickness,display_cutout_offset_on_top
+        ){
+            translate([display_pcb_width,0,display_cover_top_thickness]){
+                rotate([0,90,90]){
+                    perf_board_cutout(
+                        [display_cover_top_thickness,display_pcb_width,display_pcb_height],
+                        [display_offset_on_pcb],
+                        [[display_width,display_height]],
+                        (display_pcb_height-display_height)/2
+                    );
+                }
+            }
+        };
+    }
+}
+
+pitagora = function (x,y) sqrt(pow(x,2) + pow(y,2));
+module display_cover_top(
+    base_size_vec,
+    length,width,wall_thickness,
+    slant_offset,top_thickness,
     display_pcb_height,display_wall_thickness,display_cutout_offset_on_top
 
 ){
@@ -304,45 +349,44 @@ display_cover_wall_thickness = 2;
 
 display_cover_top_thickness = 2;
 
-// base(
-//     base_size_vec,
-//     load_plate_thickness_side,base_thickness_bottom,
-//     load_cell_attachment_top_x,load_cell_attachment_top_y,attachment_thickness,
-//     load_cell_length,
-//     perf_board_wall_thickness,perf_board_offset_inside_base,perf_board_size_vec,
-//     display_cover_width
-// ){            
-//     screw_holes(
-//         load_cell_attachment_screw_spacing,
-//         base_attachment_screw_radious,
-//         base_attachment_screw_hole_depth
-//     );
-//     screw_holes(
-//         load_cell_attachment_screw_spacing,
-//         base_attachment_screw_head_radious+fi,
-//         base_attachment_screw_head_height+fi
-//     );
+base(
+    base_size_vec,
+    load_plate_thickness_side,base_thickness_bottom,
+    load_cell_attachment_top_x,load_cell_attachment_top_y,attachment_thickness,
+    load_cell_length,
+    perf_board_wall_thickness,perf_board_offset_inside_base,perf_board_size_vec,
+    display_cover_width
+){            
+    screw_holes(
+        load_cell_attachment_screw_spacing,
+        base_attachment_screw_radious,
+        base_attachment_screw_hole_depth
+    );
+    screw_holes(
+        load_cell_attachment_screw_spacing,
+        base_attachment_screw_head_radious+fi,
+        base_attachment_screw_head_height+fi
+    );
 
-    // perf_board_cutout(
-    //     perf_board_size_vec,
-    //     [nano_usb_hole_offset_on_perf_board,charger_usb_hole_offset_on_perf_board],
-    //     [[8.6,6],[9.6,4.6]]
-    // );
-//     perf_board_rails(perf_board_size_vec,[3.5,1.7]);
+    perf_board_cutout(
+        perf_board_size_vec,
+        [nano_usb_hole_offset_on_perf_board,charger_usb_hole_offset_on_perf_board],
+        [[8.6,6],[9.6,4.6]]
+    );
+    perf_board_rails(perf_board_size_vec,[3.5,1.7]);
 
-    translate([display_cover_width,0,0]){
-        rotate([-90,0,90]){
-            display_cover_body(
-                base_size_vec,
-                display_cover_length+fi,
-                display_cover_width,
-                display_cover_wall_thickness,
-                display_cover_slant_offset,
-                chamfer_size
-            );
-        }
-    }
-// };
+
+    display_cover(
+        base_size_vec,
+        display_cover_length,
+        display_cover_width,
+        display_cover_wall_thickness,
+        display_cover_slant_offset,
+        chamfer_size,
+        display_cover_top_thickness,
+        display_pcb_height,display_wall_thickness,display_cutout_offset_on_top
+    );
+};
 
 // cube([display_cover_width-display_cover_wall_thickness*2,display_cover_length-display_cover_wall_thickness*2,1]);
 display_offset_on_pcb = 6.5;
@@ -352,26 +396,4 @@ display_width = 21;
 display_height = 11;
 display_wall_thickness = 0.2;
 display_cutout_offset_on_top = 2;
-translate([display_cover_wall_thickness,0,-base_size_vec[2]]){
-    display_cover(
-        base_size_vec,
-        display_cover_length+fi,
-        display_cover_width,
-        display_cover_wall_thickness,
-        display_cover_slant_offset,
-        chamfer_size,
-        display_cover_top_thickness,
-        display_pcb_height,display_wall_thickness,display_cutout_offset_on_top
-    ){
-        translate([display_pcb_width,0,display_cover_top_thickness]){
-            rotate([0,90,90]){
-                perf_board_cutout(
-                    [display_cover_top_thickness,display_pcb_width,display_pcb_height],
-                    [display_offset_on_pcb],
-                    [[display_width,display_height]],
-                    (display_pcb_height-display_height)/2
-                );
-            }
-        }
-    };
-}
+
