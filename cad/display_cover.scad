@@ -36,8 +36,8 @@ module display_cover(
             top_thickness,
             display_pcb_height,display_wall_thickness,display_cutout_offset_on_top
         ){
-            translate([display_pcb_width,0,top_thickness]){
-                rotate([0,90,90]){
+            translate([display_pcb_width,display_pcb_height,top_thickness]){
+                rotate([0,270,90]){
                     perf_board_cutout(
                         [top_thickness,display_pcb_width,display_pcb_height],
                         [display_offset_on_pcb],
