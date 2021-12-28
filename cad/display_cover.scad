@@ -26,28 +26,28 @@ module display_cover(
     }
 
 
-    translate([wall_thickness,0,-base_size_vec[2]]){
-        display_cover_top(
-            base_size_vec,
-            length+fi,
-            width,
-            wall_thickness,
-            slant_offset,
-            top_thickness,
-            display_pcb_height,display_wall_thickness,display_cutout_offset_on_top
-        ){
-            translate([display_pcb_width,display_pcb_height,top_thickness]){
-                rotate([0,270,90]){
-                    perf_board_cutout(
-                        [top_thickness,display_pcb_width,display_pcb_height],
-                        [display_offset_on_pcb],
-                        [[display_width,display_height]],
-                        (display_pcb_height-display_height)/2
-                    );
-                }
-            }
-        };
-    }
+    // translate([wall_thickness,0,-base_size_vec[2]]){
+    //     display_cover_top(
+    //         base_size_vec,
+    //         length+fi,
+    //         width,
+    //         wall_thickness,
+    //         slant_offset,
+    //         top_thickness,
+    //         display_pcb_height,display_wall_thickness,display_cutout_offset_on_top
+    //     ){
+    //         translate([display_pcb_width,display_pcb_height,top_thickness]){
+    //             rotate([0,270,90]){
+    //                 perf_board_cutout(
+    //                     [top_thickness,display_pcb_width,display_pcb_height],
+    //                     [display_offset_on_pcb],
+    //                     [[display_width,display_height]],
+    //                     (display_pcb_height-display_height)/2
+    //                 );
+    //             }
+    //         }
+    //     };
+    // }
 }
 
 pitagora = function (x,y) sqrt(pow(x,2) + pow(y,2));
@@ -108,14 +108,15 @@ module display_cover_body(base_size_vec,length,width,wall_thickness,slant_offset
     screw_support_radious = 2.5;
     screw_support_height = 3;
 
-    screw_support(screw_support_radious,screw_support_height,wall_thickness,-atan((slant_offset)/length),wall_thickness);
-    screw_support(screw_support_radious,screw_support_height,wall_thickness,-atan((slant_offset)/length),width-wall_thickness);
+    z_offset = base_size_vec[2]-wall_thickness;
+    screw_support(screw_support_radious,screw_support_height,wall_thickness,-atan((slant_offset)/length),wall_thickness,z_offset);
+    screw_support(screw_support_radious,screw_support_height,wall_thickness,-atan((slant_offset)/length),width-wall_thickness,z_offset);
 }
 
-module screw_support(radious,height,wall_thickness,angle,x_offset){
-    translate([0,height,x_offset])
+module screw_support(radious,height,wall_thickness,angle,x_offset,z_offset){
+    translate([0,0,x_offset])
     rotate([90,0,0])
-    translate([0,0,-12])
+    translate([0,0,-z_offset])
     rotate([0,angle,0])
     color("blue")
     cylinder(h=height,r=radious);
