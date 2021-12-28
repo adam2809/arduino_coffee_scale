@@ -61,10 +61,10 @@ module display_cover_top(
     intersection(){
         rotate([atan((slant_offset)/length),0,0]){
             y = -slant_offset/length*wall_thickness+base_size_vec[2];
-            top_length = pitagora(length,slant_offset)-pitagora(base_size_vec[2]-y,wall_thickness);
+            top_length_inc_wall = pitagora(length,slant_offset);
             difference(){
                 cube([width,length,top_thickness]);
-                translate([display_cutout_offset_on_top,(top_length-display_pcb_height)/2,-top_thickness+display_wall_thickness]){
+                translate([display_cutout_offset_on_top,(top_length_inc_wall-display_pcb_height)/2,-top_thickness+display_wall_thickness]){
                     children(0);
 
                 }
