@@ -105,4 +105,18 @@ module display_cover_body(base_size_vec,length,width,wall_thickness,slant_offset
             }
         }
     }
+    screw_support_radious = 2.5;
+    screw_support_height = 3;
+
+    screw_support(screw_support_radious,screw_support_height,wall_thickness,-atan((slant_offset)/length),wall_thickness);
+    screw_support(screw_support_radious,screw_support_height,wall_thickness,-atan((slant_offset)/length),width-wall_thickness);
+}
+
+module screw_support(radious,height,wall_thickness,angle,x_offset){
+    translate([0,height,x_offset])
+    rotate([90,0,0])
+    translate([0,0,-12])
+    rotate([0,angle,0])
+    color("blue")
+    cylinder(h=height,r=radious);
 }
