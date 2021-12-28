@@ -1,5 +1,5 @@
-// $fa = 1;
-// $fs = 0.4;
+$fa = 1;
+$fs = 0.4;
 
 use <Chamfers-for-OpenSCAD/Chamfer.scad>;
 use <display_cover.scad>;
@@ -230,7 +230,7 @@ display_cover_length = 20;
 display_cover_slant_offset = 8.3;
 display_cover_wall_thickness = 2;
 
-display_cover_top_thickness = 2;
+display_cover_top_thickness = 2.4;
 
 display_cover_cable_clearence_height = 2;
 display_cover_cable_clearence_width = 10;
@@ -286,4 +286,5 @@ display_width = 21;
 display_height = 11;
 display_wall_thickness = 0.2;
 display_cutout_offset_on_top = 2;
+
 

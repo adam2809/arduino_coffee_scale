@@ -11,6 +11,13 @@ module display_cover(
     display_wall_thickness,display_cutout_offset_on_top,
     display_offset_on_pcb
 ){
+    small_screw_r = 1;
+    small_screw_head_r = 1.5;
+    small_screw_length = 6;
+    small_screw_head_height = 2;
+
+    y = -slant_offset/length*wall_thickness+base_size_vec[2];
+    top_length = pitagora(length,slant_offset)-pitagora(base_size_vec[2]-y,wall_thickness);
     
     translate([width,0,0]){
         rotate([-90,0,90]){
@@ -21,7 +28,17 @@ module display_cover(
                 wall_thickness,
                 slant_offset,
                 chamfer_size
-            );
+            ){
+                translate([0,base_size_vec[2]-(top_thickness),width-wall_thickness])
+                rotate([90,90,-atan((slant_offset)/length)])
+                display_cover_base_screw_holes(
+                    small_screw_r,
+                    small_screw_head_r,
+                    small_screw_length,
+                    0.12+small_screw_head_r,
+                    [width-wall_thickness*2,top_length]
+                );
+            };
         }
     }
 
@@ -50,7 +67,6 @@ module display_cover(
     }
 }
 
-pitagora = function (x,y) sqrt(pow(x,2) + pow(y,2));
 module display_cover_top(
     base_size_vec,
     length,width,wall_thickness,
@@ -106,37 +122,40 @@ module display_cover_body(base_size_vec,length,width,wall_thickness,slant_offset
         }
     }
     screw_support_radious = 2.5;
-    screw_support_height = 3;
+    screw_support_height = 4 ;
 
     z_offset = base_size_vec[2]-wall_thickness;
     y_offset = -19.5;
-    intersection(){
-        union(){
-            screw_support(
-                screw_support_radious+0.5,screw_support_height,
-                wall_thickness,-atan((slant_offset)/length),
-                [wall_thickness,0,z_offset]
-            );
-            screw_support(
-                screw_support_radious+0.5,screw_support_height,
-                wall_thickness,-atan((slant_offset)/length),
-                [width-wall_thickness,0,z_offset]
-            );
-            
-            screw_support(
-                screw_support_radious,screw_support_height,
-                wall_thickness,-atan((slant_offset)/length),
-                [wall_thickness,y_offset,z_offset]
-            );
-            screw_support(
-                screw_support_radious,screw_support_height,
-                wall_thickness,-atan((slant_offset)/length),
-                [width-wall_thickness,y_offset,z_offset]
-            );
-        }
-        rotate([0,-90,0])
-        translate([0,0,-length])
-        cube([width,base_size_vec[2],length]);
+    difference(){
+        // intersection(){
+        //     union(){
+        //         screw_support(
+        //             screw_support_radious+0.5,screw_support_height,
+        //             wall_thickness,-atan((slant_offset)/length),
+        //             [wall_thickness,0,z_offset]
+        //         );
+        //         screw_support(
+        //             screw_support_radious+0.5,screw_support_height,
+        //             wall_thickness,-atan((slant_offset)/length),
+        //             [width-wall_thickness,0,z_offset]
+        //         );
+                
+        //         screw_support(
+        //             screw_support_radious,screw_support_height,
+        //             wall_thickness,-atan((slant_offset)/length),
+        //             [wall_thickness,y_offset,z_offset]
+        //         );
+        //         screw_support(
+        //             screw_support_radious,screw_support_height,
+        //             wall_thickness,-atan((slant_offset)/length),
+        //             [width-wall_thickness,y_offset,z_offset]
+        //         );
+        //     }
+        //     rotate([0,-90,0])
+        //     translate([0,0,-length])
+        //     cube([width,base_size_vec[2],length]);
+        // }
+        children(0);
     }
 }
 
@@ -148,4 +167,22 @@ module screw_support(radious,height,wall_thickness,angle,offset_vec){
     translate([-offset_vec[1],0,0])
     color("blue")
     cylinder(h=height,r=radious);
+}
+
+
+
+module display_cover_base_screw_holes(
+    r,
+    head_r,
+    length,
+    spacing_from_corners,
+    size_vec
+){
+    translate([size_vec[0]/2,0]){
+        translate([0,spacing_from_corners])
+        screw_holes(size_vec[0]-spacing_from_corners*2,r,length);
+
+        translate([0,size_vec[1]-spacing_from_corners])
+        screw_holes(size_vec[0]-spacing_from_corners*2,r,length);
+    }
 }

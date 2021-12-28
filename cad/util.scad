@@ -16,3 +16,4 @@ module perf_board_cutout(size_vec,offsets_vec,cutout_sizes_vec,offset_from_top=0
         }
     }
 }
+function pitagora(x,y) = sqrt(pow(x,2) + pow(y,2));
