@@ -235,31 +235,31 @@ display_cover_top_thickness = 2;
 display_cover_cable_clearence_height = 2;
 display_cover_cable_clearence_width = 10;
 
-base(
-    base_size_vec,
-    load_plate_thickness_side,base_thickness_bottom,
-    load_cell_attachment_top_x,load_cell_attachment_top_y,attachment_thickness,
-    load_cell_length,
-    perf_board_wall_thickness,perf_board_offset_inside_base,perf_board_size_vec,
-    display_cover_width
-){            
-    screw_holes(
-        load_cell_attachment_screw_spacing,
-        base_attachment_screw_radious,
-        base_attachment_screw_hole_depth
-    );
-    screw_holes(
-        load_cell_attachment_screw_spacing,
-        base_attachment_screw_head_radious+fi,
-        base_attachment_screw_head_height+fi
-    );
+// base(
+//     base_size_vec,
+//     load_plate_thickness_side,base_thickness_bottom,
+//     load_cell_attachment_top_x,load_cell_attachment_top_y,attachment_thickness,
+//     load_cell_length,
+//     perf_board_wall_thickness,perf_board_offset_inside_base,perf_board_size_vec,
+//     display_cover_width
+// ){            
+//     screw_holes(
+//         load_cell_attachment_screw_spacing,
+//         base_attachment_screw_radious,
+//         base_attachment_screw_hole_depth
+//     );
+//     screw_holes(
+//         load_cell_attachment_screw_spacing,
+//         base_attachment_screw_head_radious+fi,
+//         base_attachment_screw_head_height+fi
+//     );
 
-    perf_board_cutout(
-        perf_board_size_vec,
-        [nano_usb_hole_offset_on_perf_board,charger_usb_hole_offset_on_perf_board],
-        [[8.6,6],[9.6,4.6]]
-    );
-    perf_board_rails(perf_board_size_vec,[3.5,1.7]);
+//     perf_board_cutout(
+//         perf_board_size_vec,
+//         [nano_usb_hole_offset_on_perf_board,charger_usb_hole_offset_on_perf_board],
+//         [[8.6,6],[9.6,4.6]]
+//     );
+//     perf_board_rails(perf_board_size_vec,[3.5,1.7]);
 
     display_cover(
         base_size_vec,
@@ -274,8 +274,8 @@ base(
         display_wall_thickness,display_cutout_offset_on_top,
         display_offset_on_pcb
     );
-    cube([display_cover_cable_clearence_width,load_plate_thickness_side+fi*2,display_cover_cable_clearence_height],center= true);
-};
+//     cube([display_cover_cable_clearence_width,load_plate_thickness_side+fi*2,display_cover_cable_clearence_height],center= true);
+// };
 
 display_offset_on_pcb = 6.5;
 display_pcb_width = 33;

@@ -56,39 +56,43 @@ module showSnapJoint (joint) {
 }
 
 module showSnapJointParts (part=0, sub_part=0, cut=undef, cut_rotation=undef) {
-    joint_quad_i = newSnapPolygonInt (
-        radius=10, leaves=4, springs=true );
-    joint_quad_e = newSnapPolygonExt ( source=joint_quad_i );
+    r =10;
 
-    joint_circ_int_spring_i = newSnapCircleInt ( radius = 5,springs=true );
-    joint_circ_int_spring_e = newSnapCircleExt ( source=joint_circ_int_spring_i );
+    joint_quad_i = newSnapPolygonInt (radius=r, leaves=4, springs=true );
+    joint_quad_e = newSnapPolygonExt ( source=joint_quad_i );
 
     ext_h = 0;
     int_h = -SHOW_TUBE_H;
     if ( part==1 ) {
-        rotate( [180,0,0] ) {
-            translate( [0,-SHOW_ITV_H/2,ext_h] )
-                showSnapJoint( joint_quad_e );
-            translate( [0,SHOW_ITV_H/2,int_h] )
-                showSnapJoint( joint_quad_i );
-
-            
-            // translate( [+SHOW_ITV_H,-SHOW_ITV_H/2,ext_h] )
-            //     showSnapJoint( joint_circ_int_spring_e );
-            // translate( [+SHOW_ITV_H,SHOW_ITV_H/2,int_h] )
-            //     showSnapJoint ( joint_circ_int_spring_i );
+        linear_snap(r){
+            showSnapJoint(joint_quad_e);
+        }
+        linear_snap(r){
+            showSnapJoint(newSnapPolygonInt(radius=r, leaves=4, springs=true));
         }
     }
-    if ( part==2 ) {
-        rotate( [180,0,0] ) {
-            translate( [-SHOW_ITV_H/2,-SHOW_ITV_H/2,ext_h] )
-                showSnapJoint( joint_circ_ext_spring_e );
-            translate( [+SHOW_ITV_H/2,-SHOW_ITV_H/2,ext_h] )
-                showSnapJoint( joint_circ_int_spring_e );
-            translate( [-SHOW_ITV_H/2,SHOW_ITV_H/2,int_h] )
-                showSnapJoint ( joint_circ_ext_spring_i );
-            translate( [+SHOW_ITV_H/2,SHOW_ITV_H/2,int_h] )
-                showSnapJoint ( joint_circ_int_spring_i );
+}
+module linear_snap(r){
+    translate([7,0.5,0.06])
+    cutoff_snaps_support(){
+        get_snap_cross_section(r){
+            children(0);
         }
+    }
+}
+
+module get_snap_cross_section(r){
+    difference(){
+        intersection(){
+            children(0);
+            translate([-r/2,0,0]) cube(size = [r,1,100],center = true);
+        }
+    }
+}
+module cutoff_snaps_support(){
+    difference(){
+        children(0);
+        translate([-57,0,0])
+        cube(100,center = true);
     }
 }

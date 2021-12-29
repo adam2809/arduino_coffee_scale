@@ -9,24 +9,25 @@ module display_cover(
     display_pcb_height,display_pcb_width,
     display_height,display_width,
     display_wall_thickness,display_cutout_offset_on_top,
-    display_offset_on_pcb
+    display_offset_on_pcb,
+    snaps_size_vec,snap_thickness
 ){
     
-    translate([width,0,0]){
-        rotate([-90,0,90]){
-            display_cover_body(
-                base_size_vec,
-                length+fi,
-                width,
-                wall_thickness,
-                slant_offset,
-                chamfer_size
-            );
-        }
-    }
+    // translate([width,0,0]){
+    //     rotate([-90,0,90]){
+    //         display_cover_body(
+    //             base_size_vec,
+    //             length+fi,
+    //             width,
+    //             wall_thickness,
+    //             slant_offset,
+    //             chamfer_size
+    //         );
+    //     }
+    // }
 
 
-    translate([wall_thickness,0,-base_size_vec[2]]){
+    // translate([wall_thickness,0,-base_size_vec[2]]){
         display_cover_top(
             base_size_vec,
             length+fi,
@@ -47,7 +48,15 @@ module display_cover(
                 }
             }
         };
-    }
+        translate([0,0,0])
+        polygon([
+            [0,0],
+            [0,0],
+            [0,0],
+            [0,0],
+            [0,0]
+        ]);
+    // }
 }
 
 pitagora = function (x,y) sqrt(pow(x,2) + pow(y,2));
