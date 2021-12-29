@@ -2,6 +2,46 @@ use <agentscad/snap-joint.scad>
 use <BOSL/transforms.scad>
 use <NopSCADlib/vitamins/box_section.scad>
 
+module box_body(){
+    translate([wall_thickness-fi,wall_thickness+wall_clearence,bottom_clearence]){
+        linear_snap(joint_quad_e,joints_width);
+
+        back(joints_spacing-wall_clearence*2-joints_width){
+            linear_snap(joint_quad_e,joints_width);
+        }
+    }
+
+    difference(){
+        cube(size_vec);
+        translate([wall_thickness,wall_thickness,wall_thickness]){
+            cube([size_vec[0]-wall_thickness*2,size_vec[1]-wall_thickness*2+wall_clearence*2,size_vec[2]]);
+        }
+    }
+}
+
+module box_top(){
+    box_top_org = [wall_thickness,wall_thickness,size_vec[2]-wall_thickness];
+    box_top_size = [size_vec[0]-wall_thickness*2,size_vec[1]-wall_thickness*2+wall_clearence*2,wall_thickness];
+    intersection(){
+        union(){
+            translate([wall_thickness-fi,wall_thickness+wall_clearence,bottom_clearence]){
+                linear_snap(joint_quad_i,joints_width);
+                back(joints_spacing-wall_clearence*2-joints_width) 
+                    linear_snap(joint_quad_i,joints_width);
+            }
+            translate(box_top_org){
+                cube(box_top_size);
+            }
+        }
+        translate([box_top_org[0],box_top_org[1]]){
+            translate([wall_clearence,wall_clearence]){
+                cube([box_top_size[0]-wall_clearence*2,box_top_size[1]-wall_clearence*2,size_vec[2]*2]);
+            }
+        }
+
+    }
+}
+
 
 wall_thickness = 1.6;
 wall_clearence = 0.3;
@@ -19,21 +59,7 @@ external_joint_hight = getSnapJointR(joint_quad_e)/sqrt(2);
 
 size_vec = [20,wall_thickness*2+wall_clearence*2+joints_spacing,wall_thickness+bottom_clearence+internal_joint_hight];
 
-translate([wall_thickness-fi,wall_thickness+wall_clearence,wall_thickness+bottom_clearence]){
-    linear_snap(joint_quad_i,joints_width);
-    linear_snap(joint_quad_e,joints_width);
-
-    back(joints_spacing-wall_clearence*2-joints_width){
-        linear_snap(joint_quad_i,joints_width);
-        linear_snap(joint_quad_e,joints_width);
-    }
-}
-
-difference(){
-    cube(size_vec);
-    translate([wall_thickness,wall_thickness,wall_thickness]){
-        cube([size_vec[0]-wall_thickness*2,size_vec[1]-wall_thickness*2+wall_clearence*2,size_vec[2]]);
-    }
-}
-
+box_body();
+up(10)
+box_top();
 
