@@ -16,19 +16,19 @@ module display_cover(
     button_cutout_r,buttons_offset,buttons_spacing
 ){
     
-    // translate([width,0,0]){
-    //     rotate([-90,0,90]){
-    //         display_cover_body(
-    //             base_size_vec,
-    //             length+fi,
-    //             width,
-    //             wall_thickness,
-    //             slant_offset,
-    //             chamfer_size
-    //         );
-    //     }
-    // }
+    translate([width,0,0]){
+        rotate([-90,0,90]){
+            display_cover_body(
+                base_size_vec,
+                length+fi,
+                width,
+                wall_thickness,
+                slant_offset,
+                chamfer_size
+            );
 
+        }
+    }
 
     joint_quad_e = newSnapPolygonInt (radius=10, leaves=4, springs=true );
     joint_quad_i = newSnapPolygonExt ( source=joint_quad_e );
@@ -40,21 +40,20 @@ module display_cover(
     y = -slant_offset/length*wall_thickness+base_size_vec[2];
     top_length = pitagora(length,slant_offset)-pitagora(base_size_vec[2]-y,wall_thickness);
 
-
-    forward(fi){
+    translate([wall_thickness+snaps_clearence,snaps_clearence,-base_size_vec[2]]){
         snap_joints(
             [width-wall_thickness*2-snaps_clearence*2,length-wall_thickness+fi*2-snaps_clearence*2],
             wall_thickness,
-            joint_quad_i,5,external_joint_hight,true,slant_offset
+            joint_quad_e,5,external_joint_hight,false,slant_offset
         );
-    }
-    snap_joints(
-        [width-wall_thickness*2-snaps_clearence*2,length-wall_thickness+fi*2-snaps_clearence*2],
-        wall_thickness,
-        joint_quad_e,5,external_joint_hight,false,slant_offset
-    );
 
-    // translate([wall_thickness,0,-base_size_vec[2]]){
+        forward(fi){
+            snap_joints(
+                [width-wall_thickness*2-snaps_clearence*2,length-wall_thickness+fi*2-snaps_clearence*2],
+                wall_thickness,
+                joint_quad_i,5,external_joint_hight,true,slant_offset
+            );
+        }
         display_cover_top(
             base_size_vec,
             length+fi-snaps_clearence*2,
@@ -77,7 +76,7 @@ module display_cover(
             }
             screw_holes(buttons_spacing,button_cutout_r,top_thickness*3);
         };
-    // }
+    }
 }
 
 pitagora = function (x,y) sqrt(pow(x,2) + pow(y,2));
