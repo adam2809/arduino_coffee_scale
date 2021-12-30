@@ -105,11 +105,13 @@ module display_cover_top(
 
 module snap_joints(size_vec,wall_thickness,source,joints_width,joints_height,extra_support=false,slant_offset){
     upper_offset = slant_offset-wall_thickness/4-joints_height;
+    lower_offset = joints_height-wall_thickness/2;
     translate([size_vec[0]-wall_thickness*2,0,0]){
         mirror([1,0,0]){
             rotate([0,0,90]){
-                forward(joints_width)
-                linear_snap(source,joints_width,extra_support);
+                forward(joints_width) down(lower_offset){
+                    linear_snap(source,joints_width,extra_support);
+                }
             }
             back(size_vec[1]) up(upper_offset){
                 rotate([0,0,-90]) linear_snap(source,joints_width,extra_support);
@@ -117,8 +119,9 @@ module snap_joints(size_vec,wall_thickness,source,joints_width,joints_height,ext
         }
     }
     rotate([0,0,90]){
-        forward(joints_width)
-        linear_snap(source,joints_width,extra_support);
+        forward(joints_width) down(lower_offset){
+            linear_snap(source,joints_width,extra_support);
+        }
     }
     back(size_vec[1]) up(upper_offset){
         rotate([0,0,-90]) linear_snap(source,joints_width,extra_support);
