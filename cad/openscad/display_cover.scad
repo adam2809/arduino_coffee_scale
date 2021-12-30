@@ -41,14 +41,15 @@ module display_cover(
     top_length = pitagora(length,slant_offset)-pitagora(base_size_vec[2]-y,wall_thickness);
 
 
-    forward(fi)
+    forward(fi){
+        snap_joints(
+            [width-wall_thickness*2-snaps_clearence*2,length-wall_thickness+fi*2-snaps_clearence*2],
+            wall_thickness,
+            joint_quad_i,5,external_joint_hight,true,slant_offset
+        );
+    }
     snap_joints(
-        [width-wall_thickness*2,length-wall_thickness+fi*2],
-        wall_thickness,
-        joint_quad_i,5,external_joint_hight,true,slant_offset
-    );
-    snap_joints(
-        [width-wall_thickness*2,length-wall_thickness],
+        [width-wall_thickness*2-snaps_clearence*2,length-wall_thickness+fi*2-snaps_clearence*2],
         wall_thickness,
         joint_quad_e,5,external_joint_hight,false,slant_offset
     );
@@ -56,8 +57,8 @@ module display_cover(
     // translate([wall_thickness,0,-base_size_vec[2]]){
         display_cover_top(
             base_size_vec,
-            length+fi,
-            width,
+            length+fi-snaps_clearence*2,
+            width-snaps_clearence*2,
             wall_thickness,
             slant_offset,
             top_thickness,
