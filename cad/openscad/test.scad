@@ -17,7 +17,7 @@ module box_body(){
 
 module box_top(){
     box_top_org = [wall_thickness,wall_thickness,size_vec[2]-wall_thickness];
-    box_top_size = [size_vec[0]-wall_thickness*2,size_vec[1]-wall_thickness*2+wall_clearence*2,wall_thickness];
+    box_top_size = [size_vec[0]-wall_thickness*2,size_vec[1]-wall_thickness*2,wall_thickness];
     intersection(){
         union(){
             translate([wall_thickness,wall_thickness+wall_clearence,bottom_clearence]){
@@ -32,7 +32,6 @@ module box_top(){
                 cube([box_top_size[0]-wall_clearence*2,box_top_size[1]-wall_clearence*2,size_vec[2]*2]);
             }
         }
-
     }
 }
 
@@ -54,7 +53,7 @@ module snap_joints(source){
 wall_thickness = 1.6;
 wall_clearence = 0.3;
 bottom_clearence = 3;
-joints_spacing = 20;
+joints_spacing = 10;
 joints_width = 5;
 fi = 0.001;
 
@@ -76,5 +75,5 @@ size_vec = [20,wall_thickness*2+wall_clearence*2+joints_spacing+joints_width*2,w
 // }
 
 box_body();
-// up(10)
-// box_top();
+up(10)
+box_top();
