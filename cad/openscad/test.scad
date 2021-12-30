@@ -9,8 +9,8 @@ module box_body(){
 
     difference(){
         cube(size_vec);
-        translate([wall_thickness,wall_thickness,wall_thickness]){
-            cube([size_vec[0]-wall_thickness*2,size_vec[1]-wall_thickness*2+wall_clearence*2,size_vec[2]]);
+        translate([wall_thickness,wall_thickness,-wall_thickness*2]){
+            cube([size_vec[0]-wall_thickness*2,size_vec[1]-wall_thickness*2,size_vec[2]*2]);
         }
     }
 }
@@ -40,20 +40,20 @@ module snap_joints(source){
     translate([size_vec[0]-wall_thickness*2,0,0]){
         mirror([1,0,0]){
             linear_snap(source,joints_width);
-            back(joints_spacing+joints_width+wall_clearence*2) 
+            back(joints_spacing+joints_width) 
                 linear_snap(source,joints_width);
         }
     }
 
     linear_snap(source,joints_width);
-    back(joints_spacing+joints_width+wall_clearence*2) 
+    back(joints_spacing+joints_width) 
         linear_snap(source,joints_width);
 }
 
 
 wall_thickness = 1.6;
 wall_clearence = 0.3;
-bottom_clearence = 10;
+bottom_clearence = 3;
 joints_spacing = 20;
 joints_width = 5;
 fi = 0.001;
@@ -76,5 +76,5 @@ size_vec = [20,wall_thickness*2+wall_clearence*2+joints_spacing+joints_width*2,w
 // }
 
 box_body();
-
+// up(10)
 // box_top();
