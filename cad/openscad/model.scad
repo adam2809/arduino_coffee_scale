@@ -234,46 +234,47 @@ display_pcb_height = 13;
 display_width = 21;
 display_height = 11;
 display_wall_thickness = 0.2;
-display_cutout_offset_on_top = 2;
+cutouts_offset_from_ends_of_top = 5;
 
 button_cutout_r = 7.4;
 buttons_spacing = 20;
-buttons_offset = display_cutout_offset_on_top+display_pcb_width+buttons_spacing/2+button_cutout_r+6;
+buttons_display_spacing = 6;
+buttons_offset = cutouts_offset_from_ends_of_top+display_pcb_width+buttons_spacing/2+button_cutout_r+buttons_display_spacing;
 
 display_cover_length = 20;
-display_cover_slant_offset = 8.3;
+display_cover_slant_offset =7.5;
 display_cover_wall_thickness = 2;
-display_cover_width = buttons_offset+buttons_spacing/2+button_cutout_r+display_cover_wall_thickness*2+2+display_offset_on_pcb;
+display_cover_width = buttons_offset+buttons_spacing/2+button_cutout_r+display_cover_wall_thickness*2+cutouts_offset_from_ends_of_top+display_offset_on_pcb;
 
 display_cover_top_thickness = 2;
 
 display_cover_cable_clearence_height = 2;
 display_cover_cable_clearence_width = 10;
-base(
-    base_size_vec,
-    load_plate_thickness_side,base_thickness_bottom,
-    load_cell_attachment_top_x,load_cell_attachment_top_y,attachment_thickness,
-    load_cell_length,
-    perf_board_wall_thickness,perf_board_offset_inside_base,perf_board_size_vec,
-    display_cover_width
-){            
-    screw_holes(
-        load_cell_attachment_screw_spacing,
-        base_attachment_screw_radious,
-        base_attachment_screw_hole_depth
-    );
-    screw_holes(
-        load_cell_attachment_screw_spacing,
-        base_attachment_screw_head_radious+fi,
-        base_attachment_screw_head_height+fi
-    );
+// base(
+//     base_size_vec,
+//     load_plate_thickness_side,base_thickness_bottom,
+//     load_cell_attachment_top_x,load_cell_attachment_top_y,attachment_thickness,
+//     load_cell_length,
+//     perf_board_wall_thickness,perf_board_offset_inside_base,perf_board_size_vec,
+//     display_cover_width
+// ){            
+//     screw_holes(
+//         load_cell_attachment_screw_spacing,
+//         base_attachment_screw_radious,
+//         base_attachment_screw_hole_depth
+//     );
+//     screw_holes(
+//         load_cell_attachment_screw_spacing,
+//         base_attachment_screw_head_radious+fi,
+//         base_attachment_screw_head_height+fi
+//     );
 
-    perf_board_cutout(
-        perf_board_size_vec,
-        [nano_usb_hole_offset_on_perf_board,charger_usb_hole_offset_on_perf_board],
-        [[8.6,6],[9.6,4.6]]
-    );
-    perf_board_rails(perf_board_size_vec,[3.5,1.7]);
+//     perf_board_cutout(
+//         perf_board_size_vec,
+//         [nano_usb_hole_offset_on_perf_board,charger_usb_hole_offset_on_perf_board],
+//         [[8.6,6],[9.6,4.6]]
+//     );
+//     perf_board_rails(perf_board_size_vec,[3.5,1.7]);
 
     display_cover(
         base_size_vec,
@@ -285,11 +286,11 @@ base(
         display_cover_top_thickness,
         display_pcb_height,display_pcb_width,
         display_height,display_width,
-        display_wall_thickness,display_cutout_offset_on_top,
+        display_wall_thickness,cutouts_offset_from_ends_of_top,
         display_offset_on_pcb,
         button_cutout_r,buttons_offset,buttons_spacing
     );
-    cube([display_cover_cable_clearence_width,load_plate_thickness_side+fi*2,display_cover_cable_clearence_height],center= true);
-};
+//     cube([display_cover_cable_clearence_width,load_plate_thickness_side+fi*2,display_cover_cable_clearence_height],center= true);
+// };
 
 

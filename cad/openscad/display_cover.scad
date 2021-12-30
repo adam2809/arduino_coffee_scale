@@ -14,21 +14,21 @@ module display_cover(
     button_cutout_r,buttons_offset,buttons_spacing
 ){
     
-    translate([width,0,0]){
-        rotate([-90,0,90]){
-            display_cover_body(
-                base_size_vec,
-                length+fi,
-                width,
-                wall_thickness,
-                slant_offset,
-                chamfer_size
-            );
-        }
-    }
+    // translate([width,0,0]){
+    //     rotate([-90,0,90]){
+    //         display_cover_body(
+    //             base_size_vec,
+    //             length+fi,
+    //             width,
+    //             wall_thickness,
+    //             slant_offset,
+    //             chamfer_size
+    //         );
+    //     }
+    // }
 
 
-    translate([wall_thickness,0,-base_size_vec[2]]){
+    // translate([wall_thickness,0,-base_size_vec[2]]){
         display_cover_top(
             base_size_vec,
             length+fi,
@@ -51,7 +51,7 @@ module display_cover(
             }
             screw_holes(buttons_spacing,button_cutout_r,top_thickness*3);
         };
-    }
+    // }
 }
 
 pitagora = function (x,y) sqrt(pow(x,2) + pow(y,2));
