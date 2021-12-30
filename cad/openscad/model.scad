@@ -242,7 +242,7 @@ buttons_display_spacing = 6;
 buttons_offset = cutouts_offset_from_ends_of_top+display_pcb_width+buttons_spacing/2+button_cutout_r+buttons_display_spacing;
 
 display_cover_length = 20;
-display_cover_slant_offset =7.5;
+display_cover_slant_offset =10;
 display_cover_wall_thickness = 2;
 display_cover_width = buttons_offset+buttons_spacing/2+button_cutout_r+display_cover_wall_thickness*2+cutouts_offset_from_ends_of_top+display_offset_on_pcb;
 

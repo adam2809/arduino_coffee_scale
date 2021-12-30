@@ -35,6 +35,16 @@ module display_cover(
     internal_joint_hight = 5.832;
     external_joint_hight = getSnapJointR(joint_quad_e)/sqrt(2);
 
+
+    y = -slant_offset/length*wall_thickness+base_size_vec[2];
+    top_length = pitagora(length,slant_offset)-pitagora(base_size_vec[2]-y,wall_thickness);
+
+    snap_joints(
+        [width-wall_thickness*2,length-wall_thickness],
+        wall_thickness,
+        joint_quad_i,5,external_joint_hight,true,slant_offset
+    );
+
     // translate([wall_thickness,0,-base_size_vec[2]]){
         display_cover_top(
             base_size_vec,
@@ -60,7 +70,7 @@ module display_cover(
             snap_joints(
                 [width-wall_thickness*2,length-wall_thickness],
                 wall_thickness,
-                joint_quad_e,5,external_joint_hight
+                joint_quad_e,5,external_joint_hight,false,slant_offset
             );
         };
     // }
@@ -93,14 +103,15 @@ module display_cover_top(
     children(2);
 }
 
-module snap_joints(size_vec,wall_thickness,source,joints_width,joints_height,extra_support=false){
+module snap_joints(size_vec,wall_thickness,source,joints_width,joints_height,extra_support=false,slant_offset){
+    upper_offset = slant_offset-wall_thickness/4-joints_height;
     translate([size_vec[0]-wall_thickness*2,0,0]){
         mirror([1,0,0]){
             rotate([0,0,90]){
                 forward(joints_width)
                 linear_snap(source,joints_width,extra_support);
             }
-            back(size_vec[1]){
+            back(size_vec[1]) up(upper_offset){
                 rotate([0,0,-90]) linear_snap(source,joints_width,extra_support);
             }
         }
@@ -109,10 +120,9 @@ module snap_joints(size_vec,wall_thickness,source,joints_width,joints_height,ext
         forward(joints_width)
         linear_snap(source,joints_width,extra_support);
     }
-    back(size_vec[1]){
+    back(size_vec[1]) up(upper_offset){
         rotate([0,0,-90]) linear_snap(source,joints_width,extra_support);
     }
-
 }
 
 
