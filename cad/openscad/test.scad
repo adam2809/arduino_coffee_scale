@@ -4,7 +4,7 @@ use <NopSCADlib/vitamins/box_section.scad>
 
 module box_body(){
     translate([wall_thickness-fi,wall_thickness+wall_clearence,bottom_clearence]){
-        snap_joints(joint_quad_e);
+        snap_joints(joint_quad_e,true);
     }
 
     difference(){
@@ -35,23 +35,23 @@ module box_top(){
     }
 }
 
-module snap_joints(source){
+module snap_joints(source,extra_support=false){
     translate([size_vec[0]-wall_thickness*2,0,0]){
         mirror([1,0,0]){
-            linear_snap(source,joints_width);
+            linear_snap(source,joints_width,extra_support);
             back(joints_spacing+joints_width) 
-                linear_snap(source,joints_width);
+                linear_snap(source,joints_width,extra_support);
         }
     }
 
-    linear_snap(source,joints_width);
+    linear_snap(source,joints_width,extra_support);
     back(joints_spacing+joints_width) 
-        linear_snap(source,joints_width);
+        linear_snap(source,joints_width,extra_support);
 }
 
 
 wall_thickness = 1.6;
-wall_clearence = 0.3;
+wall_clearence = 0.1;
 bottom_clearence = 3;
 joints_spacing = 10;
 joints_width = 5;
@@ -75,5 +75,7 @@ size_vec = [20,wall_thickness*2+wall_clearence*2+joints_spacing+joints_width*2,w
 // }
 
 box_body();
-up(10)
-box_top();
+// up(10)
+// box_top();
+
+// linear_snap(joint_quad_e,1,true);
