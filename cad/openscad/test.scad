@@ -35,19 +35,7 @@ module box_top(){
     }
 }
 
-module snap_joints(source,extra_support=false){
-    translate([size_vec[0]-wall_thickness*2,0,0]){
-        mirror([1,0,0]){
-            linear_snap(source,joints_width,extra_support);
-            back(joints_spacing+joints_width) 
-                linear_snap(source,joints_width,extra_support);
-        }
-    }
 
-    linear_snap(source,joints_width,extra_support);
-    back(joints_spacing+joints_width) 
-        linear_snap(source,joints_width,extra_support);
-}
 
 
 wall_thickness = 1.6;
@@ -75,7 +63,7 @@ size_vec = [20,wall_thickness*2+wall_clearence*2+joints_spacing+joints_width*2,w
 // }
 
 box_body();
-// up(10)
-// box_top();
+up(10)
+box_top();
 
 // linear_snap(joint_quad_e,1,true);

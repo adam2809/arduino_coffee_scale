@@ -1,5 +1,6 @@
 use <util.scad>
 use <BOSL/transforms.scad>
+use <agentscad/snap-joint.scad>
 
 fi=0.01;
 
@@ -28,6 +29,12 @@ module display_cover(
     // }
 
 
+    joint_quad_e = newSnapPolygonInt (radius=10, leaves=4, springs=true );
+    joint_quad_i = newSnapPolygonExt ( source=joint_quad_e );
+
+    internal_joint_hight = 5.832;
+    external_joint_hight = getSnapJointR(joint_quad_e)/sqrt(2);
+
     // translate([wall_thickness,0,-base_size_vec[2]]){
         display_cover_top(
             base_size_vec,
@@ -50,6 +57,11 @@ module display_cover(
                 }
             }
             screw_holes(buttons_spacing,button_cutout_r,top_thickness*3);
+            snap_joints(
+                [width-wall_thickness*2,length-wall_thickness],
+                wall_thickness,
+                joint_quad_e,5,external_joint_hight
+            );
         };
     // }
 }
@@ -78,6 +90,29 @@ module display_cover_top(
         translate([0,0,-fi])
         cube([width-wall_thickness*2,length-wall_thickness,length]);
     }
+    children(2);
+}
+
+module snap_joints(size_vec,wall_thickness,source,joints_width,joints_height,extra_support=false){
+    translate([size_vec[0]-wall_thickness*2,0,0]){
+        mirror([1,0,0]){
+            rotate([0,0,90]){
+                forward(joints_width)
+                linear_snap(source,joints_width,extra_support);
+            }
+            back(size_vec[1]){
+                rotate([0,0,-90]) linear_snap(source,joints_width,extra_support);
+            }
+        }
+    }
+    rotate([0,0,90]){
+        forward(joints_width)
+        linear_snap(source,joints_width,extra_support);
+    }
+    back(size_vec[1]){
+        rotate([0,0,-90]) linear_snap(source,joints_width,extra_support);
+    }
+
 }
 
 
