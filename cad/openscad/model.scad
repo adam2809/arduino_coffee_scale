@@ -4,6 +4,7 @@
 use <Chamfers-for-OpenSCAD/Chamfer.scad>;
 use <display_cover.scad>;
 use <util.scad>
+use <BOSL/transforms.scad>
 
 fi=0.01;
 chamfer_size = 1;
@@ -171,7 +172,7 @@ module perf_board_rails(perf_board_size_vec,rails_size_vec,wall_thickness){
     translate([0,0,-rails_size_vec[1]]){
         cube(rail_size_vec);
         translate([0,perf_board_size_vec[1],0]){
-            cube(rail_size_vec);
+            forward(rails_size_vec[0]) cube(rail_size_vec);
         }
     }
 }
@@ -201,18 +202,18 @@ base_attachment_screw_head_radious = 3;
 base_attachment_screw_head_height = 2.5;
 base_attachment_screw_hole_depth = base_size_vec[2]*2;
 attachment_thickness = (load_plate_size_vec[2]+base_size_vec[2]+load_plate_gap-(load_plate_thickness_top+base_thickness_bottom+load_cell_thickness))/2;
-translate([load_plate_size_vec[0],0,-load_plate_gap]){
-    rotate([0,180,0]){
-        load_plate(
-            load_plate_size_vec,
-            load_plate_thickness_side,load_plate_thickness_top,
-            load_cell_attachment_top_x,load_cell_attachment_top_y,attachment_thickness,
-            load_cell_length
-        ){            
-            screw_holes(load_cell_attachment_screw_spacing,load_plate_attachment_screw_radious,load_plate_attachment_screw_hole_depth+fi);
-        };
-    }
-}
+// translate([load_plate_size_vec[0],0,-load_plate_gap]){
+//     rotate([0,180,0]){
+//         load_plate(
+//             load_plate_size_vec,
+//             load_plate_thickness_side,load_plate_thickness_top,
+//             load_cell_attachment_top_x,load_cell_attachment_top_y,attachment_thickness,
+//             load_cell_length
+//         ){            
+//             screw_holes(load_cell_attachment_screw_spacing,load_plate_attachment_screw_radious,load_plate_attachment_screw_hole_depth+fi);
+//         };
+//     }
+// }
 
 
 charger_usb_hole_offset_on_perf_board = 11.4;
