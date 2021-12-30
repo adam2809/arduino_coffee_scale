@@ -3,6 +3,7 @@ use <BOSL/transforms.scad>
 use <agentscad/snap-joint.scad>
 
 fi=0.01;
+snaps_clearence = 0.2;
 
 module display_cover(
     base_size_vec,
@@ -39,10 +40,17 @@ module display_cover(
     y = -slant_offset/length*wall_thickness+base_size_vec[2];
     top_length = pitagora(length,slant_offset)-pitagora(base_size_vec[2]-y,wall_thickness);
 
+    
+    forward(fi)
+    snap_joints(
+        [width-wall_thickness*2,length-wall_thickness+fi*2],
+        wall_thickness,
+        joint_quad_i,5,external_joint_hight,true,slant_offset
+    );
     snap_joints(
         [width-wall_thickness*2,length-wall_thickness],
         wall_thickness,
-        joint_quad_i,5,external_joint_hight,true,slant_offset
+        joint_quad_e,5,external_joint_hight,false,slant_offset
     );
 
     // translate([wall_thickness,0,-base_size_vec[2]]){
@@ -67,11 +75,6 @@ module display_cover(
                 }
             }
             screw_holes(buttons_spacing,button_cutout_r,top_thickness*3);
-            snap_joints(
-                [width-wall_thickness*2,length-wall_thickness],
-                wall_thickness,
-                joint_quad_e,5,external_joint_hight,false,slant_offset
-            );
         };
     // }
 }
@@ -100,7 +103,6 @@ module display_cover_top(
         translate([0,0,-fi])
         cube([width-wall_thickness*2,length-wall_thickness,length]);
     }
-    children(2);
 }
 
 module snap_joints(size_vec,wall_thickness,source,joints_width,joints_height,extra_support=false,slant_offset){
