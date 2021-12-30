@@ -40,7 +40,7 @@ module display_cover(
     y = -slant_offset/length*wall_thickness+base_size_vec[2];
     top_length = pitagora(length,slant_offset)-pitagora(base_size_vec[2]-y,wall_thickness);
 
-    
+
     forward(fi)
     snap_joints(
         [width-wall_thickness*2,length-wall_thickness+fi*2],
@@ -108,7 +108,7 @@ module display_cover_top(
 module snap_joints(size_vec,wall_thickness,source,joints_width,joints_height,extra_support=false,slant_offset){
     upper_offset = slant_offset-wall_thickness/4-joints_height;
     lower_offset = joints_height-wall_thickness/2;
-    translate([size_vec[0]-wall_thickness*2,0,0]){
+    translate([size_vec[0],0,0]){
         mirror([1,0,0]){
             rotate([0,0,90]){
                 forward(joints_width) down(lower_offset){
