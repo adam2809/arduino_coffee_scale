@@ -1,4 +1,5 @@
 use <util.scad>
+use <BOSL/transforms.scad>
 
 fi=0.01;
 
@@ -10,24 +11,24 @@ module display_cover(
     display_height,display_width,
     display_wall_thickness,display_cutout_offset_on_top,
     display_offset_on_pcb,
-    snaps_size_vec,snap_thickness
+    button_cutout_r,buttons_offset,buttons_spacing
 ){
     
-    // translate([width,0,0]){
-    //     rotate([-90,0,90]){
-    //         display_cover_body(
-    //             base_size_vec,
-    //             length+fi,
-    //             width,
-    //             wall_thickness,
-    //             slant_offset,
-    //             chamfer_size
-    //         );
-    //     }
-    // }
+    translate([width,0,0]){
+        rotate([-90,0,90]){
+            display_cover_body(
+                base_size_vec,
+                length+fi,
+                width,
+                wall_thickness,
+                slant_offset,
+                chamfer_size
+            );
+        }
+    }
 
 
-    // translate([wall_thickness,0,-base_size_vec[2]]){
+    translate([wall_thickness,0,-base_size_vec[2]]){
         display_cover_top(
             base_size_vec,
             length+fi,
@@ -35,7 +36,8 @@ module display_cover(
             wall_thickness,
             slant_offset,
             top_thickness,
-            display_pcb_height,display_wall_thickness,display_cutout_offset_on_top
+            display_pcb_height,display_wall_thickness,display_cutout_offset_on_top,
+            buttons_offset
         ){
             translate([display_pcb_width,display_pcb_height,top_thickness]){
                 rotate([0,270,90]){
@@ -47,16 +49,9 @@ module display_cover(
                     );
                 }
             }
+            screw_holes(buttons_spacing,button_cutout_r,top_thickness*3);
         };
-        translate([0,0,0])
-        polygon([
-            [0,0],
-            [0,0],
-            [0,0],
-            [0,0],
-            [0,0]
-        ]);
-    // }
+    }
 }
 
 pitagora = function (x,y) sqrt(pow(x,2) + pow(y,2));
@@ -64,7 +59,7 @@ module display_cover_top(
     base_size_vec,
     length,width,wall_thickness,
     slant_offset,top_thickness,
-    display_pcb_height,display_wall_thickness,display_cutout_offset_on_top
+    display_pcb_height,display_wall_thickness,display_cutout_offset_on_top,buttons_offset
 
 ){
     intersection(){
@@ -72,11 +67,12 @@ module display_cover_top(
             y = -slant_offset/length*wall_thickness+base_size_vec[2];
             top_length_inc_wall = pitagora(length,slant_offset);
             difference(){
-                cube([width,length,top_thickness]);
-                translate([display_cutout_offset_on_top,(top_length_inc_wall-display_pcb_height)/2,-top_thickness+display_wall_thickness]){
+                cube([width,length*2,top_thickness]);
+                translate([display_cutout_offset_on_top,(top_length_inc_wall-display_pcb_height)/2,display_wall_thickness-top_thickness]){
                     children(0);
 
                 }
+                translate([buttons_offset,top_length_inc_wall/2,-top_thickness]) children(1);
             }
         }
         translate([0,0,-fi])
