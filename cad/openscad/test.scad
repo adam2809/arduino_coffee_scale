@@ -5,7 +5,6 @@ use <NopSCADlib/vitamins/box_section.scad>
 module box_body(){
     translate([wall_thickness-fi,wall_thickness+wall_clearence,bottom_clearence]){
         snap_joints(joint_quad_e);
-
     }
 
     difference(){
@@ -41,13 +40,13 @@ module snap_joints(source){
     translate([size_vec[0]-wall_thickness*2,0,0]){
         mirror([1,0,0]){
             linear_snap(source,joints_width);
-            back(joints_spacing-wall_clearence*2-joints_width) 
+            back(joints_spacing+joints_width+wall_clearence*2) 
                 linear_snap(source,joints_width);
         }
     }
 
     linear_snap(source,joints_width);
-    back(joints_spacing-wall_clearence*2-joints_width) 
+    back(joints_spacing+joints_width+wall_clearence*2) 
         linear_snap(source,joints_width);
 }
 
@@ -67,15 +66,15 @@ internal_joint_hight = 5.832;
 external_joint_hight = getSnapJointR(joint_quad_e)/sqrt(2);
 
 
-size_vec = [20,wall_thickness*2+wall_clearence*2+joints_spacing,wall_thickness+bottom_clearence+internal_joint_hight];
-difference(){
-    union(){
-        box_body();
-        box_top();
-    }
-    cube(size=[100,10,100],center= true);
-}
+size_vec = [20,wall_thickness*2+wall_clearence*2+joints_spacing+joints_width*2,wall_thickness+bottom_clearence+internal_joint_hight];
+// difference(){
+//     union(){
+//         box_body();
+//         box_top();
+//     }
+//     cube(size=[100,10,100],center= true);
+// }
 
-// box_body();
+box_body();
 
 // box_top();
