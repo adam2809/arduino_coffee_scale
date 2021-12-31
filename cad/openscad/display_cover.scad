@@ -41,11 +41,11 @@ module display_cover(
     top_length = pitagora(length,slant_offset)-pitagora(base_size_vec[2]-y,wall_thickness);
 
     translate([wall_thickness+snaps_clearence,snaps_clearence,-base_size_vec[2]]){
-        snap_joints(
-            [width-wall_thickness*2-snaps_clearence*2,length-wall_thickness+fi*2-snaps_clearence*2],
-            wall_thickness,
-            joint_quad_e,5,external_joint_hight,false,slant_offset
-        );
+        // snap_joints(
+        //     [width-wall_thickness*2-snaps_clearence*2,length-wall_thickness+fi*2-snaps_clearence*2],
+        //     wall_thickness,
+        //     joint_quad_e,5,external_joint_hight,false,slant_offset
+        // );
 
         forward(fi){
             snap_joints(
@@ -106,7 +106,7 @@ module display_cover_top(
 }
 
 module snap_joints(size_vec,wall_thickness,source,joints_width,joints_height,extra_support=false,slant_offset){
-    upper_offset = joints_height+slant_offset*1.013;
+    upper_offset = joints_height+slant_offset*1.05;
     lower_offset = joints_height+wall_thickness*3/4;
     translate([size_vec[0],0,0]){
         mirror([1,0,0]){
