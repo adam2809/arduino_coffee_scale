@@ -3,7 +3,7 @@ use <BOSL/transforms.scad>
 use <agentscad/snap-joint.scad>
 
 fi=0.01;
-snaps_clearence = 0.2;
+snaps_clearence = 0.1;
 
 module display_cover(
     base_size_vec,
@@ -41,11 +41,11 @@ module display_cover(
     top_length = pitagora(length,slant_offset)-pitagora(base_size_vec[2]-y,wall_thickness);
 
     translate([wall_thickness+snaps_clearence,snaps_clearence,-base_size_vec[2]]){
-        // snap_joints(
-        //     [width-wall_thickness*2-snaps_clearence*2,length-wall_thickness+fi*2-snaps_clearence*2],
-        //     wall_thickness,
-        //     joint_quad_e,5,external_joint_hight,false,slant_offset
-        // );
+        snap_joints(
+            [width-wall_thickness*2-snaps_clearence*2,length-wall_thickness+fi*2-snaps_clearence*2],
+            wall_thickness,
+            joint_quad_e,5,external_joint_hight,false,slant_offset
+        );
 
         forward(fi){
             snap_joints(

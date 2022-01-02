@@ -202,18 +202,18 @@ base_attachment_screw_head_radious = 3;
 base_attachment_screw_head_height = 2.5;
 base_attachment_screw_hole_depth = base_size_vec[2]*2;
 attachment_thickness = (load_plate_size_vec[2]+base_size_vec[2]+load_plate_gap-(load_plate_thickness_top+base_thickness_bottom+load_cell_thickness))/2;
-// translate([load_plate_size_vec[0],0,-load_plate_gap]){
-//     rotate([0,180,0]){
-//         load_plate(
-//             load_plate_size_vec,
-//             load_plate_thickness_side,load_plate_thickness_top,
-//             load_cell_attachment_top_x,load_cell_attachment_top_y,attachment_thickness,
-//             load_cell_length
-//         ){            
-//             screw_holes(load_cell_attachment_screw_spacing,load_plate_attachment_screw_radious,load_plate_attachment_screw_hole_depth+fi);
-//         };
-//     }
-// }
+translate([load_plate_size_vec[0],0,-load_plate_gap]){
+    rotate([0,180,0]){
+        load_plate(
+            load_plate_size_vec,
+            load_plate_thickness_side,load_plate_thickness_top,
+            load_cell_attachment_top_x,load_cell_attachment_top_y,attachment_thickness,
+            load_cell_length
+        ){            
+            screw_holes(load_cell_attachment_screw_spacing,load_plate_attachment_screw_radious,load_plate_attachment_screw_hole_depth+fi);
+        };
+    }
+}
 
 
 charger_usb_hole_offset_on_perf_board = 11.4;
@@ -229,12 +229,12 @@ perf_board_wall_thickness = 0.4;
 
 
 display_offset_on_pcb = 6.5;
-display_pcb_width = 33;
+display_pcb_width = 38.2;
 display_pcb_height = 13;
-display_width = 21;
+display_width = 29.5;
 display_height = 11;
-display_wall_thickness = 0.2;
-cutouts_offset_from_ends_of_top = 5;
+display_wall_thickness = 0.4;
+cutouts_offset_from_ends_of_top = 5.5;
 
 button_cutout_r = 7.4;
 buttons_spacing = 20;
@@ -249,7 +249,7 @@ display_cover_width = buttons_offset+buttons_spacing/2+button_cutout_r+display_c
 display_cover_top_thickness = 2;
 
 display_cover_cable_clearence_height = 2;
-display_cover_cable_clearence_width = 10;
+display_cover_cable_clearence_width = 7;
 
 difference(){
 base(
@@ -292,12 +292,12 @@ base(
         display_offset_on_pcb,
         button_cutout_r,buttons_offset,buttons_spacing
     );
-    cube([display_cover_cable_clearence_width,load_plate_thickness_side+fi*2,display_cover_cable_clearence_height],center= true);
+    cube([display_cover_cable_clearence_width,load_plate_thickness_side+fi*3,display_cover_cable_clearence_height],center= true);
 };
-cube([30,1000,100],center = true);
-translate([base_size_vec[0],base_size_vec[0]])
-cube([30,1000,100],center = true);
-cube([2000,245,100],center=true);
+// cube([70,1000,100],center = true);
+// translate([base_size_vec[0],base_size_vec[0]])
+// cube([70,1000,100],center = true);
+// cube([2000,250.01,100],center=true);
 
 }
 
