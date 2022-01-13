@@ -7,7 +7,7 @@ use <util.scad>
 use <BOSL/transforms.scad>
 
 fi=0.01;
-chamfer_size = 1;
+chamfer_size = 1.5;
 
 module load_plate(
     size_vec,
@@ -100,6 +100,11 @@ module base(
     perf_board_wall_thickness,perf_board_offset_inside_base,perf_board_size_vec,
     display_cover_width
 ){
+    
+    switch_cutout_w=15.2;
+    switch_cutout_h=8.3;
+    switch_cutout_pos=[size_vec[0],size_vec[1]*2/3,switch_cutout_h/2];
+    switch_support_len=5;
     difference(){
         load_plate(
             size_vec,
@@ -153,6 +158,9 @@ module base(
 
         translate([size_vec[0]/2,size_vec[1]-side_thickness/2-fi,(size_vec[2]-bottom_thickness)/2])
         children(5);
+
+        translate(switch_cutout_pos)
+        cube([side_thickness*3,switch_cutout_w,switch_cutout_h],center = true);
     }
     translate([
         side_thickness-fi,
@@ -163,6 +171,13 @@ module base(
     }
     translate([size_vec[0]/2 - display_cover_width/2,size_vec[1]-fi,size_vec[2]]){
         children(4);
+    }
+    translate([switch_cutout_pos[0]-switch_support_len-side_thickness,switch_cutout_pos[1]]){
+        forward(switch_cutout_w/2+side_thickness)
+        cube([switch_support_len,side_thickness,size_vec[2]-bottom_thickness]);
+        back(switch_cutout_w/2)
+        cube([switch_support_len,side_thickness,size_vec[2]-bottom_thickness]);
+
     }
 }
 
@@ -180,7 +195,7 @@ module perf_board_rails(perf_board_size_vec,rails_size_vec,wall_thickness){
 
 load_plate_size_vec = [125,125,12];
 load_plate_thickness_side = 2.4;
-load_plate_thickness_top = 5.2;
+load_plate_thickness_top = 3.2;
 load_plate_gap = 3;
 
 load_cell_attachment_screw_spacing = 6;
@@ -236,8 +251,8 @@ display_height = 11;
 display_wall_thickness = 0.4;
 cutouts_offset_from_ends_of_top = 5.5;
 
-button_cutout_r = 7.4;
-buttons_spacing = 20;
+button_cutout_r = 1.8;
+buttons_spacing = 10;
 buttons_display_spacing = 6;
 buttons_offset = cutouts_offset_from_ends_of_top+display_pcb_width+buttons_spacing/2+button_cutout_r+buttons_display_spacing;
 
@@ -294,11 +309,9 @@ base(
     );
     cube([display_cover_cable_clearence_width,load_plate_thickness_side+fi*3,display_cover_cable_clearence_height],center= true);
 };
-// cube([70,1000,100],center = true);
 // translate([base_size_vec[0],base_size_vec[0]])
 // cube([70,1000,100],center = true);
 // cube([2000,250.01,100],center=true);
-
 }
 
 
