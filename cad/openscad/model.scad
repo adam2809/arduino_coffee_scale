@@ -8,6 +8,7 @@ use <BOSL/transforms.scad>
 
 fi=0.01;
 chamfer_size = 1.5;
+sack_layer_t = 0.2;
 
 module load_plate(
     size_vec,
@@ -98,13 +99,14 @@ module base(
     attachment_top_x,attachment_top_y,attachment_thickness,
     load_cell_length,
     perf_board_wall_thickness,perf_board_offset_inside_base,perf_board_size_vec,
-    display_cover_width
+    display_cover_width,screw_head_height
 ){
     
     switch_cutout_w=15.2;
-    switch_cutout_h=8.3;
+    switch_cutout_h=8.75;
     switch_cutout_pos=[size_vec[0],size_vec[1]*2/3,switch_cutout_h/2];
     switch_support_len=5;
+    switch_border_t=(10.45-switch_cutout_h)/2;
     difference(){
         load_plate(
             size_vec,
@@ -130,8 +132,8 @@ module base(
         translate([
             perf_board_wall_thickness,
             size_vec[1]-side_thickness-perf_board_offset_inside_base,
-            perf_board_size_vec[2]-fi]
-        ){
+            perf_board_size_vec[2]-fi
+        ]){
             rotate([180,0,0]){
                 children(2);
             }
@@ -159,7 +161,7 @@ module base(
         translate([size_vec[0]/2,size_vec[1]-side_thickness/2-fi,(size_vec[2]-bottom_thickness)/2])
         children(5);
 
-        translate(switch_cutout_pos)
+        translate(switch_cutout_pos) up((size_vec[2]-chamfer_size)/2 - switch_cutout_h/2)
         cube([side_thickness*3,switch_cutout_w,switch_cutout_h],center = true);
     }
     translate([
@@ -178,6 +180,16 @@ module base(
         back(switch_cutout_w/2)
         cube([switch_support_len,side_thickness,size_vec[2]-bottom_thickness]);
 
+    }
+
+    translate([
+        (size_vec[0]-load_cell_attachment_top_x)/2+attachment_top_x/2,
+        (size_vec[1] - load_cell_length)/2+attachment_top_y/2,
+        size_vec[2]-screw_head_height
+    ]){
+        rotate([0,180,0]){
+            children(6);
+        }
     }
 }
 
@@ -217,18 +229,18 @@ base_attachment_screw_head_radious = 3;
 base_attachment_screw_head_height = 2.5;
 base_attachment_screw_hole_depth = base_size_vec[2]*2;
 attachment_thickness = (load_plate_size_vec[2]+base_size_vec[2]+load_plate_gap-(load_plate_thickness_top+base_thickness_bottom+load_cell_thickness))/2;
-translate([load_plate_size_vec[0],0,-load_plate_gap]){
-    rotate([0,180,0]){
-        load_plate(
-            load_plate_size_vec,
-            load_plate_thickness_side,load_plate_thickness_top,
-            load_cell_attachment_top_x,load_cell_attachment_top_y,attachment_thickness,
-            load_cell_length
-        ){            
-            screw_holes(load_cell_attachment_screw_spacing,load_plate_attachment_screw_radious,load_plate_attachment_screw_hole_depth+fi);
-        };
-    }
-}
+// translate([load_plate_size_vec[0],0,-load_plate_gap]){
+//     rotate([0,180,0]){
+//         load_plate(
+//             load_plate_size_vec,
+//             load_plate_thickness_side,load_plate_thickness_top,
+//             load_cell_attachment_top_x,load_cell_attachment_top_y,attachment_thickness,
+//             load_cell_length
+//         ){            
+//             screw_holes(load_cell_attachment_screw_spacing,load_plate_attachment_screw_radious,load_plate_attachment_screw_hole_depth+fi);
+//         };
+//     }
+// }
 
 
 charger_usb_hole_offset_on_perf_board = 11.4;
@@ -266,15 +278,15 @@ display_cover_top_thickness = 2;
 display_cover_cable_clearence_height = 2;
 display_cover_cable_clearence_width = 7;
 
-difference(){
+intersection(){
 base(
     base_size_vec,
     load_plate_thickness_side,base_thickness_bottom,
     load_cell_attachment_top_x,load_cell_attachment_top_y,attachment_thickness,
     load_cell_length,
     perf_board_wall_thickness,perf_board_offset_inside_base,perf_board_size_vec,
-    display_cover_width
-){            
+    display_cover_width,base_attachment_screw_head_height
+){
     screw_holes(
         load_cell_attachment_screw_spacing,
         base_attachment_screw_radious,
@@ -308,9 +320,16 @@ base(
         button_cutout_r,buttons_offset,buttons_spacing
     );
     cube([display_cover_cable_clearence_width,load_plate_thickness_side+fi*3,display_cover_cable_clearence_height],center= true);
+
+    up(sack_layer_t/2)
+    cube(size=[
+        base_attachment_screw_head_radious*4+load_cell_attachment_screw_spacing,
+        base_attachment_screw_head_radious*2,
+        sack_layer_t
+    ],center=true);
 };
-// translate([base_size_vec[0],base_size_vec[0]])
-// cube([70,1000,100],center = true);
+// translate([base_size_vec[0],base_size_vec[0]-42])
+// cube([16,22,1000],center = true);
 // cube([2000,250.01,100],center=true);
 }
 
