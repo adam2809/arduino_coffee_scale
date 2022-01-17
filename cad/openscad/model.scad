@@ -1,5 +1,5 @@
-// $fa = 1;
-// $fs = 0.4;
+$fa = 1;
+$fs = 0.4;
 
 use <Chamfers-for-OpenSCAD/Chamfer.scad>;
 use <display_cover.scad>;
@@ -151,7 +151,7 @@ module base(
             size_vec[2]-bottom_thickness- attachment_thickness
         ]){
             cube([
-                perf_board_size_vec[0]-(size_vec[0]/2-(attachment_top_x/2+attachment_thickness)-side_thickness)+0.5,
+                perf_board_size_vec[0]-(size_vec[0]/2-(attachment_top_x/2+attachment_thickness)-side_thickness)+3,
                 attachment_thickness*4,
                 attachment_thickness
             ]);
@@ -211,7 +211,7 @@ load_plate_thickness_top = 3.2;
 load_plate_gap = 3;
 
 load_cell_attachment_screw_spacing = 6;
-load_plate_attachment_screw_radious = 1.6;
+load_plate_attachment_screw_radious = 1.35;
 load_plate_attachment_screw_hole_depth = 6;
 
 
@@ -243,14 +243,14 @@ attachment_thickness = (load_plate_size_vec[2]+base_size_vec[2]+load_plate_gap-(
 // }
 
 
-charger_usb_hole_offset_on_perf_board = 11.4;
-nano_usb_hole_offset_on_perf_board = 30.4;
+charger_usb_hole_offset_on_perf_board = 10.55;
+nano_usb_hole_offset_on_perf_board = 29.5;
 
-perf_board_size_vec = [50,70,13+fi];
+perf_board_size_vec = [50.5,70.5,13+fi];
 perf_board_offset_inside_base = 30;
 perf_board_attachment_rails_height = 1.7;
 perf_board_attachment_rails_width = 3.5;
-perf_board_wall_thickness = 0.4;
+perf_board_wall_thickness = 0.6;
 
 
 
@@ -300,8 +300,8 @@ base(
 
     perf_board_cutout(
         perf_board_size_vec,
-        [nano_usb_hole_offset_on_perf_board,charger_usb_hole_offset_on_perf_board],
-        [[8.6,6],[9.6,4.6]]
+        [[nano_usb_hole_offset_on_perf_board,5.5],[charger_usb_hole_offset_on_perf_board,5.9]],
+        [[8,4.2],[8.2,3.1]]
     );
     perf_board_rails(perf_board_size_vec,[3.5,1.7]);
 
@@ -321,7 +321,7 @@ base(
     );
     cube([display_cover_cable_clearence_width,load_plate_thickness_side+fi*3,display_cover_cable_clearence_height],center= true);
 
-    up(sack_layer_t/2)
+    down(sack_layer_t)
     cube(size=[
         base_attachment_screw_head_radious*4+load_cell_attachment_screw_spacing,
         base_attachment_screw_head_radious*2,
